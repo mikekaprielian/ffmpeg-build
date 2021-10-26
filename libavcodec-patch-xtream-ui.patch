@@ -1,12 +1,6 @@
- doc/muxers.texi       |  5 +++
- libavformat/segment.c | 89 +++++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 94 insertions(+)
-
-diff --git a/doc/muxers.texi b/doc/muxers.texi
-index 9ec2e31..4002473 100644
 --- ffmpeg-build-static-sources/FFmpeg/doc/muxers.texi
 +++ ffmpeg-build-static-sources/FFmpeg/doc/muxers.texi
-@@ -1228,6 +1228,11 @@ Allow caching (only affects M3U8 list files).
+@@ -1908,6 +1908,11 @@ Allow caching (only affects M3U8 list files).
  
  @item live
  Allow live-friendly file generation.
@@ -17,14 +11,10 @@ index 9ec2e31..4002473 100644
 +
  @end table
  
- @item segment_list_size @var{size}
-diff --git a/libavformat/segment.c b/libavformat/segment.c
-index 33a5cf0..82872fa 100644
+ 
 --- ffmpeg-build-static-sources/FFmpeg/libavformat/segment.c
 +++ ffmpeg-build-static-sources/FFmpeg/libavformat/segment.c
-@@ -26,8 +26,12 @@
- 
- /* #define DEBUG */
+@@ -26,6 +26,10 @@
  
 +#include "config.h"
  #include <float.h>
@@ -35,7 +25,7 @@ index 33a5cf0..82872fa 100644
  
  #include "avformat.h"
  #include "avio_internal.h"
-@@ -67,6 +71,7 @@ typedef enum {
+@@ -72,6 +72,7 @@ typedef enum {
  
  #define SEGMENT_LIST_FLAG_CACHE 1
  #define SEGMENT_LIST_FLAG_LIVE  2
@@ -43,7 +33,7 @@ index 33a5cf0..82872fa 100644
  
  typedef struct SegmentContext {
      const AVClass *class;  /**< Class for private options. */
-@@ -126,6 +131,7 @@ typedef struct SegmentContext {
+@@ -131,6 +131,7 @@ typedef struct SegmentContext {
      SegmentListEntry cur_entry;
      SegmentListEntry *segment_list_entries;
      SegmentListEntry *segment_list_entries_end;
@@ -51,7 +41,7 @@ index 33a5cf0..82872fa 100644
  } SegmentContext;
  
  static void print_csv_escaped_str(AVIOContext *ctx, const char *str)
-@@ -144,6 +150,72 @@ static void print_csv_escaped_str(AVIOContext *ctx, const char *str)
+@@ -149,6 +149,72 @@ static void print_csv_escaped_str(AVIOContext *ctx, const char *str)
          avio_w8(ctx, '"');
  }
  
@@ -124,7 +114,7 @@ index 33a5cf0..82872fa 100644
  static int segment_mux_init(AVFormatContext *s)
  {
      SegmentContext *seg = s->priv_data;
-@@ -381,8 +453,16 @@ static int segment_end(AVFormatContext *s, int write_trailer, int is_last)
+@@ -470,8 +470,16 @@ static int segment_end(AVFormatContext *s, int write_trailer, int is_last)
              if (seg->list_size && seg->segment_count >= seg->list_size) {
                  entry = seg->segment_list_entries;
                  seg->segment_list_entries = seg->segment_list_entries->next;
@@ -141,7 +131,7 @@ index 33a5cf0..82872fa 100644
              }
  
              if ((ret = segment_list_open(s)) < 0)
-@@ -957,6 +1037,14 @@ fail:
+@@ -1102,6 +1102,14 @@ fail:
          cur = next;
      }
  
@@ -156,7 +146,7 @@ index 33a5cf0..82872fa 100644
      avformat_free_context(oc);
      seg->avf = NULL;
      return ret;
-@@ -974,6 +1062,7 @@ static const AVOption options[] = {
+@@ -1145,6 +1145,7 @@ static const AVOption options[] = {
      { "segment_list_flags","set flags affecting segment list generation", OFFSET(list_flags), AV_OPT_TYPE_FLAGS, {.i64 = SEGMENT_LIST_FLAG_CACHE }, 0, UINT_MAX, E, "list_flags"},
      { "cache",             "allow list caching",                                    0, AV_OPT_TYPE_CONST, {.i64 = SEGMENT_LIST_FLAG_CACHE }, INT_MIN, INT_MAX,   E, "list_flags"},
      { "live",              "enable live-friendly list generation (useful for HLS)", 0, AV_OPT_TYPE_CONST, {.i64 = SEGMENT_LIST_FLAG_LIVE }, INT_MIN, INT_MAX,    E, "list_flags"},
