@@ -12,7 +12,7 @@
 
 ### Libavcodec Patch for Xtream-UI
 
-* I included the patch required for ffmpeg to function with Xtream-UI. 
+* I included the patch required for ffmpeg to function with Xtream-UI after compiling.
 
 ### Based on:
 
