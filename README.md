@@ -14,6 +14,7 @@
 ### Libavformat Patch for Xtream-UI
 
 * I included the patch required for ffmpeg to function with Xtream-UI after compiling.
+* patch works for ffmpeg 4.3.1. not yet working on 4.4 
 
 ### Based on:
 
