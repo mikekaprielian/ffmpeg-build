@@ -1,6 +1,6 @@
 --- ffmpeg-build-static-sources/FFmpeg/doc/muxers.texi
 +++ ffmpeg-build-static-sources/FFmpeg/doc/muxers.texi
-@@ -1908,6 +1908,11 @@ Allow caching (only affects M3U8 list files).
+@@ -2274,6 +2274,11 @@ Allow caching (only affects M3U8 list files).
  
  @item live
  Allow live-friendly file generation.
