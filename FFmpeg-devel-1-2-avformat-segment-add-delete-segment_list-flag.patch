@@ -1,0 +1,232 @@
+From patchwork Sat Oct  8 14:02:41 2016
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Patchwork-Submitter: Simon Thelen <ffmpeg-dev@c-14.de>
+X-Patchwork-Id: 908
+Delivered-To: ffmpegpatchwork@gmail.com
+Received: by 10.103.140.66 with SMTP id o63csp1821020vsd;
+	Sat, 8 Oct 2016 07:03:46 -0700 (PDT)
+X-Received: by 10.28.195.85 with SMTP id t82mr2858942wmf.97.1475935426181;
+	Sat, 08 Oct 2016 07:03:46 -0700 (PDT)
+Return-Path: <ffmpeg-devel-bounces@ffmpeg.org>
+Received: from ffbox0-bg.mplayerhq.hu (ffbox0-bg.ffmpeg.org. [79.124.17.100])
+	by mx.google.com with ESMTP id
+	sd8si11217741wjb.131.2016.10.08.07.03.42;
+	Sat, 08 Oct 2016 07:03:46 -0700 (PDT)
+Received-SPF: pass (google.com: domain of ffmpeg-devel-bounces@ffmpeg.org
+	designates 79.124.17.100 as permitted sender)
+	client-ip=79.124.17.100;
+Authentication-Results: mx.google.com;
+	spf=pass (google.com: domain of ffmpeg-devel-bounces@ffmpeg.org
+	designates 79.124.17.100 as permitted sender)
+	smtp.mailfrom=ffmpeg-devel-bounces@ffmpeg.org
+Received: from [127.0.1.1] (localhost [127.0.0.1])
+	by ffbox0-bg.mplayerhq.hu (Postfix) with ESMTP id 8023B689B71;
+	Sat,  8 Oct 2016 17:03:23 +0300 (EEST)
+X-Original-To: ffmpeg-devel@ffmpeg.org
+Delivered-To: ffmpeg-devel@ffmpeg.org
+Received: from caladan.c-14.de (caladan.c-14.de [78.47.48.217])
+	by ffbox0-bg.mplayerhq.hu (Postfix) with ESMTPS id 9D0FD689931
+	for <ffmpeg-devel@ffmpeg.org>; Sat,  8 Oct 2016 17:03:16 +0300 (EEST)
+Received: from salusa-secundus.dune
+	(HSI-KBW-109-192-116-148.hsi6.kabel-badenwuerttemberg.de
+	[109.192.116.148])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by caladan.c-14.de (Postfix) with ESMTPSA id 87FE262F7F
+	for <ffmpeg-devel@ffmpeg.org>; Sat,  8 Oct 2016 14:03:32 +0000 (UTC)
+From: Simon Thelen <ffmpeg-dev@c-14.de>
+To: ffmpeg-devel@ffmpeg.org
+Date: Sat,  8 Oct 2016 16:02:41 +0200
+Message-Id: <20161008140242.11665-1-ffmpeg-dev@c-14.de>
+X-Mailer: git-send-email 2.10.0
+Subject: [FFmpeg-devel] [PATCH 1/2] avformat/segment: add delete
+	segment_list flag
+X-BeenThere: ffmpeg-devel@ffmpeg.org
+X-Mailman-Version: 2.1.20
+Precedence: list
+List-Id: FFmpeg development discussions and patches <ffmpeg-devel.ffmpeg.org>
+List-Unsubscribe: <http://ffmpeg.org/mailman/options/ffmpeg-devel>,
+	<mailto:ffmpeg-devel-request@ffmpeg.org?subject=unsubscribe>
+List-Archive: <http://ffmpeg.org/pipermail/ffmpeg-devel/>
+List-Post: <mailto:ffmpeg-devel@ffmpeg.org>
+List-Help: <mailto:ffmpeg-devel-request@ffmpeg.org?subject=help>
+List-Subscribe: <http://ffmpeg.org/mailman/listinfo/ffmpeg-devel>,
+	<mailto:ffmpeg-devel-request@ffmpeg.org?subject=subscribe>
+Reply-To: FFmpeg development discussions and patches
+	<ffmpeg-devel@ffmpeg.org>
+MIME-Version: 1.0
+Errors-To: ffmpeg-devel-bounces@ffmpeg.org
+Sender: "ffmpeg-devel" <ffmpeg-devel-bounces@ffmpeg.org>
+
+Works in the same manner as the hls segment_delete flag.
+
+Signed-off-by: Simon Thelen <ffmpeg-dev@c-14.de>
+---
+ doc/muxers.texi       |  5 +++
+ libavformat/segment.c | 89 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 94 insertions(+)
+
+diff --git a/doc/muxers.texi b/doc/muxers.texi
+index 9ec2e31..4002473 100644
+--- a/doc/muxers.texi
++++ b/doc/muxers.texi
+@@ -1228,6 +1228,11 @@ Allow caching (only affects M3U8 list files).
+ 
+ @item live
+ Allow live-friendly file generation.
++
++@item delete
++Segment files removed from the playlist are deleted after a period of time
++equal to the duration of the segment plus the duration of the playlist.
++
+ @end table
+ 
+ @item segment_list_size @var{size}
+diff --git a/libavformat/segment.c b/libavformat/segment.c
+index 33a5cf0..82872fa 100644
+--- a/libavformat/segment.c
++++ b/libavformat/segment.c
+@@ -26,8 +26,12 @@
+ 
+ /* #define DEBUG */
+ 
++#include "config.h"
+ #include <float.h>
+ #include <time.h>
++#if HAVE_UNISTD_H
++#include <unistd.h>
++#endif
+ 
+ #include "avformat.h"
+ #include "avio_internal.h"
+@@ -67,6 +71,7 @@ typedef enum {
+ 
+ #define SEGMENT_LIST_FLAG_CACHE 1
+ #define SEGMENT_LIST_FLAG_LIVE  2
++#define SEGMENT_LIST_FLAG_DELETE 4
+ 
+ typedef struct SegmentContext {
+     const AVClass *class;  /**< Class for private options. */
+@@ -126,6 +131,7 @@ typedef struct SegmentContext {
+     SegmentListEntry cur_entry;
+     SegmentListEntry *segment_list_entries;
+     SegmentListEntry *segment_list_entries_end;
++    SegmentListEntry *segment_list_old;
+ } SegmentContext;
+ 
+ static void print_csv_escaped_str(AVIOContext *ctx, const char *str)
+@@ -144,6 +150,72 @@ static void print_csv_escaped_str(AVIOContext *ctx, const char *str)
+         avio_w8(ctx, '"');
+ }
+ 
++static int delete_old_segments(SegmentContext *seg)
++{
++    SegmentListEntry *segment, *previous_segment = NULL;
++    float playlist_duration = 0.0f;
++    int ret = 0, path_size;
++    char *dirname = NULL, *p;
++    char *path = NULL;
++
++    segment = seg->segment_list_entries;
++    while (segment) {
++        playlist_duration += segment->end_time - segment->start_time;
++        segment = segment->next;
++    }
++
++    segment = seg->segment_list_old;
++    while (segment) {
++        playlist_duration -= segment->end_time - segment->start_time;
++        previous_segment = segment;
++        segment = previous_segment->next;
++        if (playlist_duration <= -(previous_segment->end_time - previous_segment->start_time)) {
++            previous_segment->next = NULL;
++            break;
++        }
++    }
++
++    if (segment) {
++        dirname = av_strdup(seg->avf->filename);
++        if (!dirname) {
++            ret = AVERROR(ENOMEM);
++            goto fail;
++        }
++        p = (char *)av_basename(dirname);
++        *p = '\0';
++    }
++
++    while (segment) {
++        av_log(seg, AV_LOG_DEBUG, "deleting old segment %s\n",
++                                  segment->filename);
++        path_size = strlen(dirname) + strlen(segment->filename) + 1;
++        path = av_malloc(path_size);
++        if (!path) {
++            ret = AVERROR(ENOMEM);
++            goto fail;
++        }
++
++        av_strlcpy(path, dirname, path_size);
++        av_strlcat(path, segment->filename, path_size);
++        if (unlink(path) < 0) {
++            av_log(segment, AV_LOG_ERROR, "failed to delete old segment %s: %s\n",
++                                          path, strerror(errno));
++        }
++        av_freep(&path);
++        previous_segment = segment;
++        segment = previous_segment->next;
++        av_freep(&previous_segment->filename);
++        av_free(previous_segment);
++    }
++
++fail:
++    av_free(path);
++    av_free(dirname);
++
++    return ret;
++}
++
++
+ static int segment_mux_init(AVFormatContext *s)
+ {
+     SegmentContext *seg = s->priv_data;
+@@ -381,8 +453,16 @@ static int segment_end(AVFormatContext *s, int write_trailer, int is_last)
+             if (seg->list_size && seg->segment_count >= seg->list_size) {
+                 entry = seg->segment_list_entries;
+                 seg->segment_list_entries = seg->segment_list_entries->next;
++                if (entry && seg->list_flags & SEGMENT_LIST_FLAG_DELETE &&
++                        !seg->segment_idx_wrap) {
++                    entry->next = seg->segment_list_old;
++                    seg->segment_list_old = entry;
++                    if ((ret = delete_old_segments(seg)) < 0)
++                        return ret;
++                } else {
+                 av_freep(&entry->filename);
+                 av_freep(&entry);
++                }
+             }
+ 
+             if ((ret = segment_list_open(s)) < 0)
+@@ -957,6 +1037,14 @@ fail:
+         cur = next;
+     }
+ 
++    cur = seg->segment_list_old;
++    while (cur) {
++        next = cur->next;
++        av_freep(&cur->filename);
++        av_free(cur);
++        cur = next;
++    }
++
+     avformat_free_context(oc);
+     seg->avf = NULL;
+     return ret;
+@@ -974,6 +1062,7 @@ static const AVOption options[] = {
+     { "segment_list_flags","set flags affecting segment list generation", OFFSET(list_flags), AV_OPT_TYPE_FLAGS, {.i64 = SEGMENT_LIST_FLAG_CACHE }, 0, UINT_MAX, E, "list_flags"},
+     { "cache",             "allow list caching",                                    0, AV_OPT_TYPE_CONST, {.i64 = SEGMENT_LIST_FLAG_CACHE }, INT_MIN, INT_MAX,   E, "list_flags"},
+     { "live",              "enable live-friendly list generation (useful for HLS)", 0, AV_OPT_TYPE_CONST, {.i64 = SEGMENT_LIST_FLAG_LIVE }, INT_MIN, INT_MAX,    E, "list_flags"},
++    { "delete",            "delete segment files that are no longer part of the playlist", 0, AV_OPT_TYPE_CONST, {.i64 = SEGMENT_LIST_FLAG_DELETE }, INT_MIN, INT_MAX,    E, "list_flags"},
+ 
+     { "segment_list_size", "set the maximum number of playlist entries", OFFSET(list_size), AV_OPT_TYPE_INT,  {.i64 = 0},     0, INT_MAX, E },
+ 
