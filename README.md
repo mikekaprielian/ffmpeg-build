@@ -10,6 +10,10 @@
 * LinuxMint 19.1
 * CentOS 7
 
+### Libavcodec Patch for Xtream-UI
+
+* I included the patch required for ffmpeg to function with Xtream-UI. 
+
 ### Based on:
 
 * https://trac.ffmpeg.org/wiki/CompilationGuide/Ubuntu
