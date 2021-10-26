@@ -234,7 +234,7 @@ compileOpenSSL() {
 
 compileFfmpeg(){
     echo "Compiling ffmpeg"
-    Clone https://github.com/FFmpeg/FFmpeg -b master
+    Clone https://github.com/FFmpeg/FFmpeg/tree/n4.3.1 -b master
     patch --force -d "$WORK_DIR" -p1 < "$MYDIR/libavformat-patch-xtream-ui.patch"
 
     export PATH="$CUDA_DIR/bin:$PATH"  # ..path to nvcc
