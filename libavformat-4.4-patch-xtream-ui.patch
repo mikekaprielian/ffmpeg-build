@@ -14,7 +14,7 @@
  
 --- ffmpeg-build-static-sources/FFmpeg/libavformat/segment.c
 +++ ffmpeg-build-static-sources/FFmpeg/libavformat/segment.c
-@@ -26,6 +26,10 @@
+@@ -27,6 +27,10 @@
  
 +#include "config.h"
  #include <float.h>
@@ -114,7 +114,7 @@
  static int segment_mux_init(AVFormatContext *s)
  {
      SegmentContext *seg = s->priv_data;
-@@ -462,8 +462,16 @@ static int segment_end(AVFormatContext *s, int write_trailer, int is_last)
+@@ -461,8 +461,16 @@ static int segment_end(AVFormatContext *s, int write_trailer, int is_last)
              if (seg->list_size && seg->segment_count >= seg->list_size) {
                  entry = seg->segment_list_entries;
                  seg->segment_list_entries = seg->segment_list_entries->next;
@@ -131,7 +131,7 @@
              }
  
              if ((ret = segment_list_open(s)) < 0)
-@@ -749,6 +749,14 @@ fail:
+@@ -748,6 +748,14 @@ fail:
          cur = next;
      }
 +
@@ -143,14 +143,13 @@
 +        cur = next;
 +    }
 +
-     avformat_free_context(oc);
-     seg->avf = NULL;
-     return ret;
-@@ -1106,6 +1106,7 @@ static const AVOption options[] = {
+}
+
+static int seg_init(AVFormatContext *s)
+@@ -1105,6 +1105,7 @@ static const AVOption options[] = {
      { "segment_list_flags","set flags affecting segment list generation", OFFSET(list_flags), AV_OPT_TYPE_FLAGS, {.i64 = SEGMENT_LIST_FLAG_CACHE }, 0, UINT_MAX, E, "list_flags"},
      { "cache",             "allow list caching",                                    0, AV_OPT_TYPE_CONST, {.i64 = SEGMENT_LIST_FLAG_CACHE }, INT_MIN, INT_MAX,   E, "list_flags"},
      { "live",              "enable live-friendly list generation (useful for HLS)", 0, AV_OPT_TYPE_CONST, {.i64 = SEGMENT_LIST_FLAG_LIVE }, INT_MIN, INT_MAX,    E, "list_flags"},
 +    { "delete",            "delete segment files that are no longer part of the playlist", 0, AV_OPT_TYPE_CONST, {.i64 = SEGMENT_LIST_FLAG_DELETE }, INT_MIN, INT_MAX,    E, "list_flags"},
- 
+
      { "segment_list_size", "set the maximum number of playlist entries", OFFSET(list_size), AV_OPT_TYPE_INT,  {.i64 = 0},     0, INT_MAX, E },
- 
