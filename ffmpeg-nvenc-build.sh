@@ -233,13 +233,23 @@ compileFfmpeg(){
       --prefix="$DEST_DIR" \
       --bindir="$DEST_DIR/bin" \
       --extra-cflags="-I $DEST_DIR/include -I $CUDA_DIR/include/" \
-      --extra-ldflags="-L $DEST_DIR/lib -L $CUDA_DIR/lib64/" \
-      --extra-libs="-lpthread" \
+      --extra-ldflags="-L $DEST_DIR/lib -Wl,-Bstatic -lcrypto -lssl -Wl,-Bdynamic -L $CUDA_DIR/lib64/" \
+      --extra-libs="-lsupc++ -lgmp -lz -lunistring -lpthread -lm -lrt -ldl" \
+      --extra-cflags="--static" \
+      --disable-shared \
       --enable-cuda \
-      --enable-cuda-sdk \
+      --enable-cuda-nvcc \
+      --enable-cuda-llvm \
       --enable-cuvid \
       --enable-libnpp \
+      --enable-pic \
+      --enable-ffplay \
+      --enable-ffnvcodec \
+      --enable-openssl \
       --enable-gpl \
+      --enable-librtmp \
+      --disable-vaapi \
+      --enable-version3 \
       --enable-libass \
       --enable-libfdk-aac \
       --enable-vaapi \
@@ -253,7 +263,8 @@ compileFfmpeg(){
       --enable-libx265 \
       --enable-nonfree \
       --enable-libaom \
-      --enable-nvenc
+      --enable-nvenc \
+      --enable-nvdec
     Make install distclean
     hash -r
 }
