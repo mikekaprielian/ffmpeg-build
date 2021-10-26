@@ -4,8 +4,8 @@
 
 diff --git a/doc/muxers.texi b/doc/muxers.texi
 index 9ec2e31..4002473 100644
---- a/doc/muxers.texi
-+++ b/doc/muxers.texi
+--- ffmpeg-build-static-sources/FFmpeg/doc/muxers.texi
++++ ffmpeg-build-static-sources/FFmpeg/doc/muxers.texi
 @@ -1228,6 +1228,11 @@ Allow caching (only affects M3U8 list files).
  
  @item live
@@ -20,8 +20,8 @@ index 9ec2e31..4002473 100644
  @item segment_list_size @var{size}
 diff --git a/libavformat/segment.c b/libavformat/segment.c
 index 33a5cf0..82872fa 100644
---- a/libavformat/segment.c
-+++ b/libavformat/segment.c
+--- ffmpeg-build-static-sources/FFmpeg/libavformat/segment.c
++++ ffmpeg-build-static-sources/FFmpeg/libavformat/segment.c
 @@ -26,8 +26,12 @@
  
  /* #define DEBUG */
