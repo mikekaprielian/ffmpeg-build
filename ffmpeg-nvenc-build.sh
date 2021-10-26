@@ -259,7 +259,7 @@ compileFfmpeg(){
       --enable-openssl \
       --enable-gpl \
       --enable-librtmp \
-      --disable-vaapi \
+      --enable-vaapi \
       --enable-version3 \
       --enable-libass \
       --enable-libfdk-aac \
