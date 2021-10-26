@@ -221,6 +221,17 @@ compileLibAss() {
     Make install distclean
 }
 
+compileOpenSSL() {
+    echo "Compiling openSSL"
+    cd "$WORK_DIR/"
+    Wget "https://www.openssl.org/source/openssl-1.1.1h.tar.gz"
+    tar -xvf "openssl-1.1.1h.tar.gz"
+    cd "openssl-1.1.1h"
+    ./config --prefix="$WORK_DIR"/openssl-1.1.1h --openssldir="$WORK_DIR"/openssl-1.1.1h --with-zlib-include="$WORK_DIR"/openssl-1.1.1h/include --with-zlib-lib="$WORK_DIR"/openssl-1.1.1h/lib no-shared zlib
+    make -j 4
+    make install
+}
+
 compileFfmpeg(){
     echo "Compiling ffmpeg"
     Clone https://github.com/FFmpeg/FFmpeg -b master
@@ -283,6 +294,7 @@ compileLibfdkcc
 compileLibMP3Lame
 compileLibOpus
 compileLibAss
+compileOpenSSL
 # TODO: libogg
 # TODO: libvorbis
 compileFfmpeg
