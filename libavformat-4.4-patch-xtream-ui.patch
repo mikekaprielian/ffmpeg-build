@@ -44,7 +44,7 @@
 @@ -149,6 +149,72 @@ static void print_csv_escaped_str(AVIOContext *ctx, const char *str)
          avio_w8(ctx, '"');
  }
- 
++
 +static int delete_old_segments(SegmentContext *seg)
 +{
 +    SegmentListEntry *segment, *previous_segment = NULL;
