@@ -244,18 +244,18 @@ compileFfmpeg(){
       --prefix="$DEST_DIR" \
       --bindir="$DEST_DIR/bin" \
       --extra-cflags="-I $DEST_DIR/include -I $CUDA_DIR/include/" \
-      --extra-ldflags="-L $DEST_DIR/lib -Wl,-Bstatic -lcrypto -lssl -Wl,-Bdynamic -L $CUDA_DIR/lib64/" \
-      --extra-libs="-lsupc++ -lgmp -lz -lunistring -lpthread -lm -lrt -ldl" \
-      --extra-cflags="--static" \
-      --disable-shared \
+      --extra-ldflags="-L $DEST_DIR/lib -L $CUDA_DIR/lib64/" \
+      --extra-libs="-lpthread -lm -lz" \
+#      --extra-cflags="--static" \
+#      --disable-shared \
       --enable-cuda \
       --enable-cuda-nvcc \
-      --enable-cuda-llvm \
+#      --enable-cuda-llvm \
       --enable-cuvid \
       --enable-libnpp \
-      --enable-pic \
-      --enable-ffplay \
-      --enable-ffnvcodec \
+#      --enable-pic \
+#      --enable-ffplay \
+#      --enable-ffnvcodec \
       --enable-openssl \
       --enable-gpl \
       --enable-librtmp \
@@ -263,7 +263,6 @@ compileFfmpeg(){
       --enable-version3 \
       --enable-libass \
       --enable-libfdk-aac \
-      --enable-vaapi \
       --enable-libfreetype \
       --enable-libmp3lame \
       --enable-libopus \
@@ -280,9 +279,9 @@ compileFfmpeg(){
     hash -r
 }
 
-installLibs
-installCUDASDK
-installNvidiaSDK
+#installLibs
+#installCUDASDK
+#installNvidiaSDK
 
 compileNasm
 compileYasm
