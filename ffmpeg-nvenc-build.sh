@@ -227,7 +227,7 @@ compileOpenSSL() {
     Wget "https://www.openssl.org/source/openssl-1.1.1h.tar.gz"
     tar -xvf "openssl-1.1.1h.tar.gz"
     cd "openssl-1.1.1h"
-    ./config --prefix="$WORK_DIR"/openssl-1.1.1h --openssldir="$WORK_DIR"/openssl-1.1.1h --with-zlib-include="$WORK_DIR"/openssl-1.1.1h/include --with-zlib-lib="$WORK_DIR"/openssl-1.1.1h/lib no-shared zlib
+    ./config --prefix="$DEST_DIR" --openssldir="$WORK_DIR"/openssl-1.1.1h --with-zlib-include="$WORK_DIR"/openssl-1.1.1h/include --with-zlib-lib="$WORK_DIR"/openssl-1.1.1h/lib no-shared zlib
     make -j 4
     make install
 }
