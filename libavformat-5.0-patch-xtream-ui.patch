@@ -1,6 +1,6 @@
 --- ffmpeg-build-static-sources/FFmpeg/doc/muxers.texi
 +++ ffmpeg-build-static-sources/FFmpeg/doc/muxers.texi
-@@ -2274,6 +2274,11 @@ Allow caching (only affects M3U8 list files).
+@@ -2286,6 +2286,11 @@
  
  @item live
  Allow live-friendly file generation.
@@ -10,6 +10,9 @@
 +equal to the duration of the segment plus the duration of the playlist.
 +
  @end table
+ 
+ @item segment_list_size @var{size}
+
 
 --- ffmpeg-build-static-sources/FFmpeg/libavformat/segment_.c	2022-01-23 11:08:03.841810307 -0500
 +++ ffmpeg-build-static-sources/FFmpeg/libavformat/segment_.c	2022-01-23 11:16:07.411360090 -0500
