@@ -14,8 +14,8 @@
  @item segment_list_size @var{size}
 
 
---- ffmpeg-build-static-sources/FFmpeg/libavformat/segment_.c	2022-01-23 11:08:03.841810307 -0500
-+++ ffmpeg-build-static-sources/FFmpeg/libavformat/segment_.c	2022-01-23 11:16:07.411360090 -0500
+--- ffmpeg-build-static-sources/FFmpeg/libavformat/segment.c	2022-01-23 11:08:03.841810307 -0500
++++ ffmpeg-build-static-sources/FFmpeg/libavformat/segment.c	2022-01-23 11:16:07.411360090 -0500
 @@ -24,8 +24,12 @@
   * @url{http://tools.ietf.org/id/draft-pantos-http-live-streaming}
   */
