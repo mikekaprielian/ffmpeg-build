@@ -372,8 +372,7 @@ compileLibspeex() {
 
 }
 
-compile Libxml() {
-
+compileLibxml() {
     echo "Compiling Libxml2"
     cd "$WORK_DIR/"
     Wget "ftp://xmlsoft.org/libxml2/libxml2-2.9.2.tar.gz"
@@ -399,6 +398,7 @@ compileFfmpeg(){
       --extra-ldflags="-L $DEST_DIR/lib -L $CUDA_DIR/lib64/" \
       --extra-libs="-lpthread -lm -lz" \
       --extra-cflags="--static" \
+      --extra-ldexeflags="-static" \
       --disable-shared \
       --enable-cuda \
       --enable-cuda-nvcc \
@@ -407,6 +407,8 @@ compileFfmpeg(){
       --enable-libnpp \
       --enable-pic \
       --enable-ffplay \
+      --enable-fontconfig \
+      --enable-frei0r \
       --enable-ffnvcodec \
       --enable-openssl \
       --enable-gpl \
@@ -423,6 +425,19 @@ compileFfmpeg(){
       --enable-libvpx \
       --enable-libx264 \
       --enable-libx265 \
+      --enable-libfribidi \
+      --enable-libopencore-amrnb \
+      --enable-libopencore-amrwb \
+      --enable-libopenjpeg \
+      --enable-librtmp \
+      --enable-libsoxr \
+      --enable-libspeex \
+      --enable-libtheora \
+      --enable-libvidstab \
+      --enable-libvo-amrwbenc \
+      --enable-libwebp \
+      --enable-libxvid \
+      --enable-libzimg \
       --enable-nonfree \
       --enable-libaom \
       --enable-nvenc \
@@ -430,6 +445,7 @@ compileFfmpeg(){
     Make install distclean
     hash -r
 }
+
 
 installLibs
 installCUDASDK
@@ -447,10 +463,20 @@ compileLibOpus
 compileLibAss
 compileOpenSSL
 compileHarfbuzz
-# TODO: libogg
-# TODO: libvorbis
+compileFribidi
+compileLibrtmp
+compileLibSoxr
+compileLibvidstab
+compileOpenJPEG
+compileZimg
+compileLibwebp
+compileLibvorbis
+compileLibogg
+compileLibspeex
+compileLibxml
 compileFfmpeg
 
 echo "Complete!"
 
 ## END ##
+
