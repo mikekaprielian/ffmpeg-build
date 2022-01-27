@@ -151,8 +151,9 @@ compileLibX265() {
     fi
 
     cd "$WORK_DIR/x265/build/linux/"
-    cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="$DEST_DIR" -DENABLE_SHARED:bool=off ../../source
+    cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="$DEST_DIR" -DSTATIC_LINK_CRT:BOOL=ON -DENABLE_SHARED:bool=off ../../source
     Make install
+    sed -i 's/-lgcc_s/-lgcc_eh/g' "$DEST_DIR/lib/pkgconfig/x265.pc"
 
     # forward declaration should not be used without struct keyword!
     sed -i.orig -e 's,^ *x265_param\* zoneParam,struct x265_param* zoneParam,' "$DEST_DIR/include/x265.h"
@@ -274,9 +275,9 @@ compileLibSoxr() {
     cd "$WORK_DIR/"
     Wget "https://cfhcable.dl.sourceforge.net/project/soxr/soxr-0.1.3-Source.tar.xz"
     tar -xvf "soxr-0.1.3-Source.tar.xz"
-    cd soxr*
+    cd soxr-*
     PATH="$DEST_DIR/bin:$PATH" cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="$DEST_DIR" -DBUILD_SHARED_LIBS:bool=off -DWITH_OPENMP:bool=off -DBUILD_TESTS:bool=off
-    make -j $jval
+    make -j 4
     make install
 
 }
@@ -285,10 +286,10 @@ compileLibvidstab() {
     echo "Compiling libvidstab"
     cd "$WORK_DIR/"
     Wget "https://github.com/georgmartius/vid.stab/archive/v1.1.0.tar.gz"
-    tar -xzf "v1.1.0.tar.gz"
-    cd vid.stab*
+    tar -xvf "v1.1.0.tar.gz"
+    cd vid.stab-*
     sed -i "s/vidstab SHARED/vidstab STATIC/" ./CMakeLists.txt
-    PATH="$DEST_DIR/bin:$PATH" cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="$DEST_DIR"
+    PATH="$DEST_DIR/bin:$PATH" cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="$DEST_DIR" -DBUILD_SHARED_LIBS:bool=off -DWITH_OPENMP:bool=off
     make -j 4
     make install
 
@@ -298,7 +299,7 @@ compileOpenJPEG() {
     echo "Compiling OpenJPEG"
     cd "$WORK_DIR/"
     Wget "https://github.com/uclouvain/openjpeg/archive/refs/tags/v2.4.0.tar.gz"
-    tar -xzf "v2.4.0.tar.gz"
+    tar -xvf "v2.4.0.tar.gz"
     cd openjpeg-2.4.0
     mkdir -v build
     cd build
@@ -310,7 +311,7 @@ compileZimg() {
     echo "Compiling Zimg"
     cd "$WORK_DIR/"
     Wget "https://github.com/sekrit-twc/zimg/archive/refs/tags/release-3.0.3.tar.gz"
-    tar -xzf "release-3.0.3.tar.gz"
+    tar -xvf "release-3.0.3.tar.gz"
     cd zimg-release-*
     ./autogen.sh
     ./configure --enable-static  --prefix="$DEST_DIR" --disable-shared
@@ -323,7 +324,7 @@ compileLibwebp() {
     echo "Compiling libwebp"
     cd "$WORK_DIR/"
     Wget "https://github.com/webmproject/libwebp/archive/refs/tags/v1.2.2.tar.gz"
-    tar -xzf "v1.2.2.tar.gz"
+    tar -xvf "v1.2.2.tar.gz"
     cd libwebp*
     ./autogen.sh
     ./configure --prefix="$DEST_DIR" --disable-shared
@@ -336,7 +337,7 @@ compileLibvorbis() {
     echo "Compiling libvorbis"
     cd "$WORK_DIR/"
     Wget "https://github.com/xiph/vorbis/releases/download/v1.3.7/libvorbis-1.3.7.tar.gz"
-    tar -xzf "libvorbis-1.3.7.tar.gz"
+    tar -xvf "libvorbis-1.3.7.tar.gz"
     cd libvorbis*
    ./autogen.sh
    ./configure --prefix="$DEST_DIR" --disable-shared
@@ -362,13 +363,26 @@ compileLibspeex() {
     echo "Compiling libspeex"
     cd "$WORK_DIR/"
     Wget "https://github.com/xiph/speex/archive/refs/tags/Speex-1.2.0.tar.gz"
-    tar -xzf "Speex-1.2.0.tar.gz"
+    tar -xvf "Speex-1.2.0.tar.gz"
     cd Speex-*
     ./autogen.sh
     ./configure --prefix=$TARGET_DIR --disable-shared
     make -j 4
     make install
 
+}
+
+compile Libxml() {
+
+    echo "Compiling Libxml2"
+    cd "$WORK_DIR/"
+    Wget "ftp://xmlsoft.org/libxml2/libxml2-2.9.2.tar.gz"
+    tar -xvf "libxml2-2.9.2.tar.gz"
+    ./configure --prefix=/root/ffmpeg_build --enable-static --with-history
+    make -j 4
+    make install
+
+}
 
 compileFfmpeg(){
     echo "Compiling ffmpeg"
@@ -385,7 +399,6 @@ compileFfmpeg(){
       --extra-ldflags="-L $DEST_DIR/lib -L $CUDA_DIR/lib64/" \
       --extra-libs="-lpthread -lm -lz" \
       --extra-cflags="--static" \
-      --extra-ldexeflags="-static" \
       --disable-shared \
       --enable-cuda \
       --enable-cuda-nvcc \
@@ -394,8 +407,6 @@ compileFfmpeg(){
       --enable-libnpp \
       --enable-pic \
       --enable-ffplay \
-      --enable-fontconfig \
-      --enable-frei0r \
       --enable-ffnvcodec \
       --enable-openssl \
       --enable-gpl \
@@ -412,19 +423,6 @@ compileFfmpeg(){
       --enable-libvpx \
       --enable-libx264 \
       --enable-libx265 \
-      --enable-libfribidi \
-      --enable-libopencore-amrnb \
-      --enable-libopencore-amrwb \
-      --enable-libopenjpeg \
-      --enable-librtmp \
-      --enable-libsoxr \
-      --enable-libspeex \
-      --enable-libtheora \
-      --enable-libvidstab \
-      --enable-libvo-amrwbenc \
-      --enable-libwebp \
-      --enable-libxvid \
-      --enable-libzimg \
       --enable-nonfree \
       --enable-libaom \
       --enable-nvenc \
@@ -432,7 +430,6 @@ compileFfmpeg(){
     Make install distclean
     hash -r
 }
-
 
 installLibs
 installCUDASDK
@@ -450,16 +447,8 @@ compileLibOpus
 compileLibAss
 compileOpenSSL
 compileHarfbuzz
-compileFribidi
-compileLibrtmp
-compileLibSoxr
-compileLibvidstab
-compileOpenJPEG
-compileZimg
-compileLibwebp
-compileLibvorbis
-compileLibogg
-compileLibspeex
+# TODO: libogg
+# TODO: libvorbis
 compileFfmpeg
 
 echo "Complete!"
