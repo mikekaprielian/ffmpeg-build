@@ -385,8 +385,8 @@ compileLibxml() {
 
 compileFfmpeg(){
     echo "Compiling ffmpeg"
-    Clone https://github.com/FFmpeg/FFmpeg -b n4.3.2
-    patch --force -d "$WORK_DIR" -p1 < "$MYDIR/libavformat-4.3.1-patch-xtream-ui.patch"
+    Clone https://github.com/FFmpeg/FFmpeg.git
+    patch --force -d "$WORK_DIR" -p1 < "$MYDIR/libavformat-5.0-patch-xtream-ui.patch"
 
     export PATH="$CUDA_DIR/bin:$PATH"  # ..path to nvcc
     PKG_CONFIG_PATH="$DEST_DIR/lib/pkgconfig:$DEST_DIR/lib64/pkgconfig" \
