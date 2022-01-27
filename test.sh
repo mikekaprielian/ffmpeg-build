@@ -366,7 +366,7 @@ compileLibspeex() {
     tar -xvf "Speex-1.2.0.tar.gz"
     cd Speex-*
     ./autogen.sh
-    ./configure --prefix=$TARGET_DIR --disable-shared
+    ./configure --prefix="$DEST_DIR" --disable-shared
     make -j 4
     make install
 
@@ -377,7 +377,7 @@ compileLibxml() {
     cd "$WORK_DIR/"
     Wget "ftp://xmlsoft.org/libxml2/libxml2-2.9.2.tar.gz"
     tar -xvf "libxml2-2.9.2.tar.gz"
-    ./configure --prefix=/root/ffmpeg_build --enable-static --with-history
+    ./configure --prefix="$DEST_DIR" --enable-static --with-history
     make -j 4
     make install
 
