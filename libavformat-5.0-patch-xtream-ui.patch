@@ -154,27 +154,42 @@
          return AVERROR(ENOMEM);
 @@ -967,22 +1046,53 @@
  {
-     SegmentContext *seg = s->priv_data;
-     AVFormatContext *oc = seg->avf;
-+    SegmentListEntry *cur, *next;
-     int ret;
-     
-     if (!oc)
+-    SegmentContext *seg = s->priv_data;
+-    AVFormatContext *oc = seg->avf;
+-    int ret;
+-
+-    if (!oc)
 -        return 0;
+-
+-    if (!seg->write_header_trailer) {
+-        if ((ret = segment_end(s, 0, 1)) < 0)
+-            return ret;
+-        if ((ret = open_null_ctx(&oc->pb)) < 0)
+-            return ret;
+-        seg->is_nullctx = 1;
+-        ret = av_write_trailer(oc);
+-    } else {
+-        ret = segment_end(s, 1, 1);
+-    }
+-    return ret;
++     SegmentContext *seg = s->priv_data;
++     AVFormatContext *oc = seg->avf;
++    SegmentListEntry *cur, *next;
++     int ret;
++     
++     if (!oc)
 +        goto fail;
- 
-     if (!seg->write_header_trailer) {
-         if ((ret = segment_end(s, 0, 1)) < 0)
--            return ret;
++ 
++     if (!seg->write_header_trailer) {
++         if ((ret = segment_end(s, 0, 1)) < 0)
 +            goto fail;
-         if ((ret = open_null_ctx(&oc->pb)) < 0)
--            return ret;
++         if ((ret = open_null_ctx(&oc->pb)) < 0)
 +            goto fail;
-         seg->is_nullctx = 1;
-         ret = av_write_trailer(oc);
-     } else {
-         ret = segment_end(s, 1, 1);
-     }
++         seg->is_nullctx = 1;
++         ret = av_write_trailer(oc);
++     } else {
++         ret = segment_end(s, 1, 1);
++     }
 +fail:
 +    if (seg->list)
 +        ff_format_io_close(s, &seg->list_pb);
@@ -204,8 +219,7 @@
 +
 +    avformat_free_context(oc);
 +    seg->avf = NULL;
-     return ret;
-+
++     return ret;
  }
  
  static int seg_check_bitstream(AVFormatContext *s, AVStream *st,
