@@ -14,8 +14,8 @@
  @item segment_list_size @var{size}
 
 
---- ffmpeg-build-static-sources/FFmpeg/libavformat/segment.c	2022-01-23 11:08:03.841810307 -0500
-+++ ffmpeg-build-static-sources/FFmpeg/libavformat/segment.c	2022-01-23 11:16:07.411360090 -0500
+--- ffmpeg-build-static-sources/FFmpeg/libavformat/segment_.c	2022-01-23 11:08:03.841810307 -0500
++++ ffmpeg-build-static-sources/FFmpeg/libavformat/segment_.c	2022-01-23 11:16:07.411360090 -0500
 @@ -24,8 +24,12 @@
   * @url{http://tools.ietf.org/id/draft-pantos-http-live-streaming}
   */
@@ -118,15 +118,7 @@
  static int segment_mux_init(AVFormatContext *s)
  {
      SegmentContext *seg = s->priv_data;
-@@ -158,7 +230,6 @@
-     av_dict_copy(&oc->metadata, s->metadata, 0);
-     oc->opaque             = s->opaque;
-     oc->io_close           = s->io_close;
--    oc->io_close2          = s->io_close2;
-     oc->io_open            = s->io_open;
-     oc->flags              = s->flags;
- 
-@@ -387,8 +458,16 @@
+@@ -387,8 +459,16 @@
              if (seg->list_size && seg->segment_count >= seg->list_size) {
                  entry = seg->segment_list_entries;
                  seg->segment_list_entries = seg->segment_list_entries->next;
@@ -143,7 +135,7 @@
              }
  
              if ((ret = segment_list_open(s)) < 0)
-@@ -570,7 +649,7 @@
+@@ -570,7 +650,7 @@
      uint8_t *buf = av_malloc(buf_size);
      if (!buf)
          return AVERROR(ENOMEM);
@@ -152,44 +144,29 @@
      if (!*ctx) {
          av_free(buf);
          return AVERROR(ENOMEM);
-@@ -967,22 +1046,53 @@
+@@ -967,22 +1047,53 @@
  {
--    SegmentContext *seg = s->priv_data;
--    AVFormatContext *oc = seg->avf;
--    int ret;
--
--    if (!oc)
+     SegmentContext *seg = s->priv_data;
+     AVFormatContext *oc = seg->avf;
++    SegmentListEntry *cur, *next;
+     int ret;
+ 
+     if (!oc)
 -        return 0;
--
--    if (!seg->write_header_trailer) {
--        if ((ret = segment_end(s, 0, 1)) < 0)
--            return ret;
--        if ((ret = open_null_ctx(&oc->pb)) < 0)
--            return ret;
--        seg->is_nullctx = 1;
--        ret = av_write_trailer(oc);
--    } else {
--        ret = segment_end(s, 1, 1);
--    }
--    return ret;
-+     SegmentContext *seg = s->priv_data;
-+     AVFormatContext *oc = seg->avf;
-+     SegmentListEntry *cur, *next;
-+     int ret = 0;
-+     
-+     if (!oc)
 +        goto fail;
-+ 
-+     if (!seg->write_header_trailer) {
-+         if ((ret = segment_end(s, 0, 1)) < 0)
+ 
+     if (!seg->write_header_trailer) {
+         if ((ret = segment_end(s, 0, 1)) < 0)
+-            return ret;
 +            goto fail;
-+         if ((ret = open_null_ctx(&oc->pb)) < 0)
+         if ((ret = open_null_ctx(&oc->pb)) < 0)
+-            return ret;
 +            goto fail;
-+         seg->is_nullctx = 1;
-+         ret = av_write_trailer(oc);
-+     } else {
-+         ret = segment_end(s, 1, 1);
-+     }
+         seg->is_nullctx = 1;
+         ret = av_write_trailer(oc);
+     } else {
+         ret = segment_end(s, 1, 1);
+     }
 +fail:
 +    if (seg->list)
 +        ff_format_io_close(s, &seg->list_pb);
@@ -219,14 +196,16 @@
 +
 +    avformat_free_context(oc);
 +    seg->avf = NULL;
-+     return ret;
+     return ret;
++
  }
  
  static int seg_check_bitstream(AVFormatContext *s, AVStream *st,
-@@ -1016,6 +1126,7 @@
+@@ -1016,6 +1127,7 @@
      { "segment_list_flags","set flags affecting segment list generation", OFFSET(list_flags), AV_OPT_TYPE_FLAGS, {.i64 = SEGMENT_LIST_FLAG_CACHE }, 0, UINT_MAX, E, "list_flags"},
      { "cache",             "allow list caching",                                    0, AV_OPT_TYPE_CONST, {.i64 = SEGMENT_LIST_FLAG_CACHE }, INT_MIN, INT_MAX,   E, "list_flags"},
      { "live",              "enable live-friendly list generation (useful for HLS)", 0, AV_OPT_TYPE_CONST, {.i64 = SEGMENT_LIST_FLAG_LIVE }, INT_MIN, INT_MAX,    E, "list_flags"},
 +    { "delete",            "delete segment files that are no longer part of the playlist", 0, AV_OPT_TYPE_CONST, {.i64 = SEGMENT_LIST_FLAG_DELETE }, INT_MIN, INT_MAX,    E, "list_flags"},
  
      { "segment_list_size", "set the maximum number of playlist entries", OFFSET(list_size), AV_OPT_TYPE_INT,  {.i64 = 0},     0, INT_MAX, E },
+ 
