@@ -149,7 +149,7 @@
      SegmentContext *seg = s->priv_data;
      AVFormatContext *oc = seg->avf;
 +    SegmentListEntry *cur, *next;
-     int ret = 0;
+     int ret;
  
      if (!oc)
 -        return 0;
