@@ -13,17 +13,20 @@ NASM_VERSION="2.15.03"
 YASM_VERSION="1.3.0"
 LAME_VERSION="3.100"
 OPUS_VERSION="1.3.1"
-LASS_VERSION="0.14.0"
+LASS_VERSION="0.15.2"
 CUDA_VERSION="10.1.243-1"
 CUDA_RPM_VER="-10-1"
 CUDA_REPO_KEY="http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/7fa2af80.pub"
 CUDA_DIR="/usr/local/cuda"
 WORK_DIR="$HOME/ffmpeg-build-static-sources"
 DEST_DIR="$HOME/ffmpeg-build-static-binaries"
+TARGET_DIR_SED=$(echo $WORK_DIR | awk '{gsub(/\//, "\\/"); print}')
+
 
 mkdir -p "$WORK_DIR" "$DEST_DIR" "$DEST_DIR/bin"
 
 export PATH="$DEST_DIR/bin:$PATH"
+export LD_LIBRARY_PATH="$DEST_DIR"/lib:$LD_LIBRARY_PATH
 
 MYDIR="$(cd "$(dirname "$0")" && pwd)"  #"
 
@@ -50,7 +53,8 @@ installAptLibs() {
     sudo apt-get -y --force-yes install $PKGS \
       build-essential pkg-config texi2html software-properties-common \
       libfreetype6-dev libgpac-dev libsdl1.2-dev libtheora-dev libva-dev \
-      libvdpau-dev libvorbis-dev libxcb1-dev libxcb-shm0-dev libxcb-xfixes0-dev libfribidi-dev libcrystalhd-dev libssl-dev zlib1g-dev
+      libvdpau-dev libvorbis-dev libxcb1-dev libxcb-shm0-dev libxcb-xfixes0-dev libfribidi-dev libcrystalhd-dev libssl-dev zlib1g-dev \
+      libopencore-amrnb-dev libopencore-amrwb-dev python-dev libfontconfig1-dev libvo-amrwbenc-dev libxvidcore-dev liblzma-dev libtool-bin
 }
 
 installYumLibs() {
@@ -218,8 +222,9 @@ compileLibAss() {
     tar Jxvf "libass-$LASS_VERSION.tar.xz"
     cd "libass-$LASS_VERSION"
     autoreconf -fiv
-    ./configure --prefix="$DEST_DIR" --disable-shared
-    Make install distclean
+    ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
+    make -j 4
+    make install
 }
 
 compileOpenSSL() {
@@ -261,12 +266,13 @@ compileLibrtmp() {
     echo "Compiling librtmp"
     cd "$WORK_DIR/"
     Wget "https://rtmpdump.mplayerhq.hu/download/rtmpdump-2.2e.tar.gz"
-    tar -xzf rtmpdump-2.2e.tar.gz
-    cd rtmpdump*
+    tar -xvf "rtmpdump-2.2e.tar.gz"
+    cd rtmpdump-2.2e
     sed -i "/INC=.*/d" ./Makefile # Remove INC if present from previous run.
-    sed -i "s/prefix=.*/prefix="$DEST_DIR"\nINC=-I\$(prefix)\/include/" ./Makefile
+    sed -i "s/prefix=.*/prefix=${TARGET_DIR_SED}\nINC=-I\$(prefix)\/include/" ./Makefile
     sed -i "s/SHARED=.*/SHARED=no/" ./Makefile
-    make install_base
+    make 
+    make install
 
 }
 
@@ -304,7 +310,8 @@ compileOpenJPEG() {
     mkdir -v build
     cd build
     cmake .. -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="$DEST_DIR" -DBUILD_SHARED_LIBS:bool=off
-    Make install distclean
+    make 
+    make install 
 }
 
 compileZimg() {
@@ -314,7 +321,7 @@ compileZimg() {
     tar -xvf "release-3.0.3.tar.gz"
     cd zimg-release-*
     ./autogen.sh
-    ./configure --enable-static  --prefix="$DEST_DIR" --disable-shared
+    ./configure --enable-static  --prefix="$DEST_DIR" --disable-shared --enable-static
     make -j 4
     make install
 
@@ -327,7 +334,7 @@ compileLibwebp() {
     tar -xvf "v1.2.2.tar.gz"
     cd libwebp*
     ./autogen.sh
-    ./configure --prefix="$DEST_DIR" --disable-shared
+    ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
     make -j 4
     make install
 
@@ -338,9 +345,9 @@ compileLibvorbis() {
     cd "$WORK_DIR/"
     Wget "https://github.com/xiph/vorbis/releases/download/v1.3.7/libvorbis-1.3.7.tar.gz"
     tar -xvf "libvorbis-1.3.7.tar.gz"
-    cd libvorbis*
+    cd libvorbis-*
    ./autogen.sh
-   ./configure --prefix="$DEST_DIR" --disable-shared
+   ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
     make -j 4
     make install
 
@@ -351,9 +358,8 @@ compileLibogg() {
     cd "$WORK_DIR/"
     Wget "https://github.com/xiph/ogg/releases/download/v1.3.5/libogg-1.3.5.tar.xz"
     tar -xvf "libogg-1.3.5.tar.xz"
-    cd libogg*
-    ./autogen.sh
-    ./configure --prefix="$DEST_DIR" --disable-shared
+    cd libogg-1.3.5
+    ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
     make -j 4
     make install
 
@@ -364,9 +370,9 @@ compileLibspeex() {
     cd "$WORK_DIR/"
     Wget "https://github.com/xiph/speex/archive/refs/tags/Speex-1.2.0.tar.gz"
     tar -xvf "Speex-1.2.0.tar.gz"
-    cd Speex-*
+    cd speex-Speex-1.2.0
     ./autogen.sh
-    ./configure --prefix="$DEST_DIR" --disable-shared
+    ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
     make -j 4
     make install
 
@@ -375,17 +381,45 @@ compileLibspeex() {
 compileLibxml() {
     echo "Compiling Libxml2"
     cd "$WORK_DIR/"
-    Wget "ftp://xmlsoft.org/libxml2/libxml2-2.9.2.tar.gz"
-    tar -xvf "libxml2-2.9.2.tar.gz"
-    ./configure --prefix="$DEST_DIR" --enable-static --with-history
+    Wget "ftp://xmlsoft.org/libxml2/libxml2-2.9.12.tar.gz"
+    tar -xvf "libxml2-2.9.12.tar.gz"
+    cd libxml2-2.9.12
+    ./configure --prefix="$DEST_DIR" --disable-shared --enable-static --with-history
     make -j 4
     make install
 
 }
 
+compile Libmfx() {
+     echo "Compiling Libmfx"
+     git clone https://github.com/lu-zero/mfx_dispatch.git
+     cd mfx_dispatch
+     autoreconf -fiv
+     ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
+     make -j 4
+     make install
+     libtool --finish "$DEST_DIR"/lib
+     ldconfig
+     apt-get install -y ocl-icd-opencl-dev opencl-headers
+     apt-get install -y libva-dev vainfo
+
+}
+
+compile Libdav1d() {
+     echo "compiling Libdav1d"
+     sudo apt-get -y install python3-pip
+     pip3 install --user meson
+     git -C dav1d pull 2> /dev/null || git clone --depth 1 https://code.videolan.org/videolan/dav1d.git
+     mkdir -p dav1d/build
+     cd dav1d/build
+     meson setup -Denable_tools=false -Denable_tests=false --default-library=static .. --prefix "$DEST_DIR" --libdir="$DEST_DIR"/lib
+     ninja
+     ninja install
+}
+
 compileFfmpeg(){
     echo "Compiling ffmpeg"
-    Clone https://github.com/FFmpeg/FFmpeg.git
+    Clone https://github.com/FFmpeg/FFmpeg -b master
     patch --force -d "$WORK_DIR" -p1 < "$MYDIR/libavformat-5.0-patch-xtream-ui.patch"
 
     export PATH="$CUDA_DIR/bin:$PATH"  # ..path to nvcc
@@ -399,12 +433,12 @@ compileFfmpeg(){
       --extra-libs="-lpthread -lm -lz" \
       --extra-cflags="--static" \
       --extra-ldexeflags="-static" \
+      --ld=g++ \
       --disable-shared \
       --enable-cuda \
       --enable-cuda-nvcc \
       --enable-cuda-llvm \
       --enable-cuvid \
-      --enable-libnpp \
       --enable-pic \
       --enable-ffplay \
       --enable-fontconfig \
@@ -412,9 +446,9 @@ compileFfmpeg(){
       --enable-ffnvcodec \
       --enable-openssl \
       --enable-gpl \
-      --enable-librtmp \
-      --enable-vaapi \
       --enable-version3 \
+      --enable-vaapi \
+      --enable-libnpp \
       --enable-libass \
       --enable-libfdk-aac \
       --enable-libfreetype \
@@ -429,7 +463,6 @@ compileFfmpeg(){
       --enable-libopencore-amrnb \
       --enable-libopencore-amrwb \
       --enable-libopenjpeg \
-      --enable-librtmp \
       --enable-libsoxr \
       --enable-libspeex \
       --enable-libtheora \
@@ -438,6 +471,7 @@ compileFfmpeg(){
       --enable-libwebp \
       --enable-libxvid \
       --enable-libzimg \
+      --enable-libmfx \
       --enable-nonfree \
       --enable-libaom \
       --enable-nvenc \
@@ -447,33 +481,33 @@ compileFfmpeg(){
 }
 
 
-installLibs
-installCUDASDK
-installNvidiaSDK
+#installLibs
+#installCUDASDK
+#installNvidiaSDK
 
-compileNasm
-compileYasm
-compileLibX264
-compileLibX265
-compileLibAom
-compileLibVpx
-compileLibfdkcc
-compileLibMP3Lame
-compileLibOpus
-compileLibAss
-compileOpenSSL
-compileHarfbuzz
-compileFribidi
-compileLibrtmp
-compileLibSoxr
-compileLibvidstab
-compileOpenJPEG
-compileZimg
-compileLibwebp
-compileLibvorbis
-compileLibogg
-compileLibspeex
-compileLibxml
+#compileNasm
+#compileYasm
+#compileLibX264
+#compileLibX265
+#compileLibAom
+#compileLibVpx
+#compileLibfdkcc
+#compileLibMP3Lame
+#compileLibOpus
+#compileLibAss
+#compileOpenSSL
+#compileHarfbuzz
+#compileFribidi
+#compileLibrtmp
+#compileLibSoxr
+#compileLibvidstab
+#compileOpenJPEG
+#compileZimg
+#compileLibwebp
+#compileLibvorbis
+#compileLibogg
+#compileLibspeex
+#compileLibxml
 compileFfmpeg
 
 echo "Complete!"
