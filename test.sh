@@ -28,6 +28,7 @@ mkdir -p "$WORK_DIR" "$DEST_DIR" "$DEST_DIR/bin"
 export PATH="$DEST_DIR/bin:$PATH"
 export LD_LIBRARY_PATH="$DEST_DIR"/lib:$LD_LIBRARY_PATH
 
+
 MYDIR="$(cd "$(dirname "$0")" && pwd)"  #"
 
 ####  Routines  ################################################
@@ -52,9 +53,9 @@ installAptLibs() {
     sudo apt-get update
     sudo apt-get -y --force-yes install $PKGS \
       build-essential pkg-config texi2html software-properties-common \
-      libfreetype6-dev libgpac-dev libsdl1.2-dev libtheora-dev libva-dev \
+      libfreetype6-dev libgpac-dev libsdl1.2-dev libtheora-dev libva-dev python-xcbgen xcb-proto \
       libvdpau-dev libvorbis-dev libxcb1-dev libxcb-shm0-dev libxcb-xfixes0-dev libfribidi-dev libcrystalhd-dev libssl-dev zlib1g-dev \
-      libopencore-amrnb-dev libopencore-amrwb-dev python-dev libfontconfig1-dev libvo-amrwbenc-dev libxvidcore-dev liblzma-dev libtool-bin
+      libopencore-amrnb-dev libopencore-amrwb-dev python-dev libfontconfig1-dev libvo-amrwbenc-dev liblzma-dev libtool-bin
 }
 
 installYumLibs() {
@@ -390,13 +391,12 @@ compileLibxml() {
 
 }
 
-compile Libmfx() {
+compileLibmfx() {
      echo "Compiling Libmfx"
      git clone https://github.com/lu-zero/mfx_dispatch.git
      cd mfx_dispatch
      autoreconf -fiv
      ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
-     make -j 4
      make install
      libtool --finish "$DEST_DIR"/lib
      ldconfig
@@ -405,7 +405,7 @@ compile Libmfx() {
 
 }
 
-compile Libdav1d() {
+compileLibdav1d() {
      echo "compiling Libdav1d"
      sudo apt-get -y install python3-pip
      pip3 install --user meson
@@ -417,13 +417,66 @@ compile Libdav1d() {
      ninja install
 }
 
+compileLibxvidcore() {
+     echo "compiling Libxvidcore"
+     Wget "https://downloads.xvid.com/downloads/xvidcore-1.3.7.tar.gz"
+     tar -xvf "xvidcore-1.3.7.tar.gz"
+     cd xvidcore/build/generic
+     sed -i 's/^LN_S=@LN_S@/& -f -v/' platform.inc.in
+     ./configure --prefix="$DEST_DIR"
+     make
+     make install
+}
+
+compileLibopencore() {
+     echo "compiling Libopencore armwb armnb"
+     Wget "https://versaweb.dl.sourceforge.net/project/opencore-amr/opencore-amr/opencore-amr-0.1.5.tar.gz"
+     tar -xvf "opencore-amr-0.1.5.tar.gz"
+     cd opencore-amr-0.1.5
+     ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
+     make
+     make install
+}
+
+compileLibvoamrwb() {
+     echo "compiling Libvoamrwb"
+     Wget "https://cfhcable.dl.sourceforge.net/project/opencore-amr/vo-amrwbenc/vo-amrwbenc-0.1.3.tar.gz"
+     tar -xvf "vo-amrwbenc-0.1.3.tar.gz"
+     cd vo-amrwbenc-0.1.3
+     ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
+     make
+     make install
+}
+
+compileSDL2() {
+     echo "compiling SDL2"
+     Wget "https://www.libsdl.org/release/SDL2-2.0.14.tar.gz"
+     tar -xvf "SDL2-2.0.14.tar.gz"
+     cd SDL2-2.0.14
+     ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
+     make
+     make install
+}
+
+compilelibxcb() {
+     echo "compiling LibXCB"
+     Wget "https://xcb.freedesktop.org/dist/libxcb-1.13.tar.bz2"
+     tar -xvf "libxcb-1.13.tar.bz2"
+     cd libxcb-1.13
+     sed -i "s/pthread-stubs//" configure
+     ./configure $XORG_CONFIG --prefix="$DEST_DIR" --without-doxygen --disable-shared --enable-static
+     make
+     make install
+     libtool --finish "$DEST_DIR"/lib
+}
+
 compileFfmpeg(){
     echo "Compiling ffmpeg"
     Clone https://github.com/FFmpeg/FFmpeg -b master
     patch --force -d "$WORK_DIR" -p1 < "$MYDIR/libavformat-5.0-patch-xtream-ui.patch"
 
     export PATH="$CUDA_DIR/bin:$PATH"  # ..path to nvcc
-    PKG_CONFIG_PATH="$DEST_DIR/lib/pkgconfig:$DEST_DIR/lib64/pkgconfig" \
+    PATH="$DEST_DIR/bin:$PATH" PKG_CONFIG_PATH="$DEST_DIR/lib/pkgconfig:$DEST_DIR/lib64/pkgconfig" \
     ./configure \
       --pkg-config-flags="--static" \
       --prefix="$DEST_DIR" \
@@ -431,19 +484,19 @@ compileFfmpeg(){
       --extra-cflags="-I $DEST_DIR/include -I $CUDA_DIR/include/" \
       --extra-ldflags="-L $DEST_DIR/lib -L $CUDA_DIR/lib64/" \
       --extra-libs="-lpthread -lm -lz" \
-      --extra-cflags="--static" \
-      --extra-ldexeflags="-static" \
       --ld=g++ \
       --disable-shared \
+      --enable-static \
+      --disable-crystalhd \
       --enable-cuda \
       --enable-cuda-nvcc \
       --enable-cuda-llvm \
       --enable-cuvid \
       --enable-pic \
-      --enable-ffplay \
       --enable-fontconfig \
       --enable-frei0r \
       --enable-ffnvcodec \
+      --enable-ffplay \
       --enable-openssl \
       --enable-gpl \
       --enable-version3 \
@@ -460,18 +513,19 @@ compileFfmpeg(){
       --enable-libx264 \
       --enable-libx265 \
       --enable-libfribidi \
-      --enable-libopencore-amrnb \
-      --enable-libopencore-amrwb \
       --enable-libopenjpeg \
       --enable-libsoxr \
       --enable-libspeex \
       --enable-libtheora \
       --enable-libvidstab \
-      --enable-libvo-amrwbenc \
       --enable-libwebp \
-      --enable-libxvid \
       --enable-libzimg \
       --enable-libmfx \
+      --enable-libxvid \
+      --enable-libopencore-amrnb \
+      --enable-libopencore-amrwb \
+      --enable-libvo-amrwbenc \
+      --enable-sdl2 \
       --enable-nonfree \
       --enable-libaom \
       --enable-nvenc \
@@ -480,34 +534,37 @@ compileFfmpeg(){
     hash -r
 }
 
+installLibs
+installCUDASDK
+installNvidiaSDK
 
-#installLibs
-#installCUDASDK
-#installNvidiaSDK
-
-#compileNasm
-#compileYasm
-#compileLibX264
-#compileLibX265
-#compileLibAom
-#compileLibVpx
-#compileLibfdkcc
-#compileLibMP3Lame
-#compileLibOpus
-#compileLibAss
-#compileOpenSSL
-#compileHarfbuzz
-#compileFribidi
-#compileLibrtmp
-#compileLibSoxr
-#compileLibvidstab
-#compileOpenJPEG
-#compileZimg
-#compileLibwebp
-#compileLibvorbis
-#compileLibogg
-#compileLibspeex
-#compileLibxml
+compileNasm
+compileYasm
+compileLibX264
+compileLibX265
+compileLibAom
+compileLibVpx
+compileLibfdkcc
+compileLibMP3Lame
+compileLibOpus
+compileLibAss
+compileOpenSSL
+compileHarfbuzz
+compileFribidi
+#compileLibrtmp not working yet (--enable-librtmp cannot be used yet)
+compileLibSoxr
+compileLibvidstab
+compileOpenJPEG
+compileZimg
+compileLibwebp
+compileLibvorbis
+compileLibogg
+compileLibspeex
+compileLibxml
+compileLibdav1d
+compileLibxvidcore
+compileSDL2
+compilelibxcb
 compileFfmpeg
 
 echo "Complete!"
