@@ -526,7 +526,6 @@ compileFfmpeg(){
       --enable-libopencore-amrnb \
       --enable-libopencore-amrwb \
       --enable-libvo-amrwbenc \
-      --enable-sdl2 \
       --enable-nonfree \
       --enable-libaom \
       --enable-nvenc \
