@@ -423,9 +423,10 @@ compileLibxvidcore() {
      tar -xvf "xvidcore-1.3.7.tar.gz"
      cd xvidcore/build/generic
      sed -i 's/^LN_S=@LN_S@/& -f -v/' platform.inc.in
-     ./configure --prefix="$DEST_DIR"
+     ./configure --prefix="$DEST_DIR" --disable-assembly
      make
      make install
+     rm "$DEST_DIR"/lib/libxvidcore.so*
 }
 
 compileLibopencore() {
