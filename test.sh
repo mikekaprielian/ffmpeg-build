@@ -537,7 +537,6 @@ compileFfmpeg(){
       --enable-libopenjpeg \
       --enable-libsoxr \
       --enable-libspeex \
-      --enable-libtheora \
       --enable-libvidstab \
       --enable-libwebp \
       --enable-libzimg \
