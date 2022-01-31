@@ -54,8 +54,8 @@ installAptLibs() {
     sudo apt-get -y --force-yes install $PKGS \
       build-essential pkg-config texi2html software-properties-common \
       libfreetype6-dev libgpac-dev libsdl1.2-dev libtheora-dev libva-dev python-xcbgen xcb-proto \
-      libvdpau-dev libvorbis-dev libxcb1-dev libxcb-shm0-dev libxcb-xfixes0-dev libfribidi-dev libcrystalhd-dev libssl-dev zlib1g-dev \
-      libopencore-amrnb-dev libopencore-amrwb-dev python-dev libfontconfig1-dev libvo-amrwbenc-dev liblzma-dev libtool-bin
+      libvdpau-dev libvorbis-dev libxcb1-dev libxcb-shm0-dev libxcb-xfixes0-dev libfribidi-dev  libssl-dev zlib1g-dev \
+      python-dev liblzma-dev libtool-bin
 }
 
 installYumLibs() {
