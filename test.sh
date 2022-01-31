@@ -476,9 +476,19 @@ compilelibXv() {
      Wget "https://www.x.org/releases/individual/lib/libXv-1.0.11.tar.gz"
      tar -xvf "libXv-1.0.11.tar.gz"
      cd libXv-1.0.11
-     ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
+     ./configure --prefix="$DEST_DIR" --disable-shared --enable-static --disable-docs
      make
      make install
+}
+
+compileFontconfig() {
+    echo "compiling Fontconfig"
+    Wget "https://www.freedesktop.org/software/fontconfig/release/fontconfig-2.13.94.tar.xz"
+    tar -xvf "fontconfig-2.13.94.tar.xz"
+    cd fontconfig-2.13.94
+    ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
+    make
+    make install
 }
      
 compileFfmpeg(){
@@ -577,6 +587,7 @@ compileLibxvidcore
 compileSDL2
 compilelibxcb
 compilelibXv
+compileFontconfig
 compileFfmpeg
 
 echo "Complete!"
