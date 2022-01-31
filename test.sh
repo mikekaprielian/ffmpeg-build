@@ -471,6 +471,16 @@ compilelibxcb() {
      libtool --finish "$DEST_DIR"/lib
 }
 
+compilelibXv() {
+     echo "compiling LibXv"
+     Wget "https://www.x.org/releases/individual/lib/libXv-1.0.11.tar.gz"
+     tar -xvf "libXv-1.0.11.tar.gz"
+     cd libXv-1.0.11
+     ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
+     make
+     make install
+}
+     
 compileFfmpeg(){
     echo "Compiling ffmpeg"
     Clone https://github.com/FFmpeg/FFmpeg -b master
@@ -526,6 +536,7 @@ compileFfmpeg(){
       --enable-libopencore-amrnb \
       --enable-libopencore-amrwb \
       --enable-libvo-amrwbenc \
+      --enable-libXv \
       --enable-nonfree \
       --enable-libaom \
       --enable-nvenc \
@@ -565,6 +576,7 @@ compileLibdav1d
 compileLibxvidcore
 compileSDL2
 compilelibxcb
+compilelibXv
 compileFfmpeg
 
 echo "Complete!"
