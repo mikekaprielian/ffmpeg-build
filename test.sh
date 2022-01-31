@@ -533,7 +533,16 @@ compileLibogg() {
     make install
 }
     
-     
+compileLibvdpau() {
+    echo "Compiling Libvdpau"
+    Wget "https://people.freedesktop.org/~aplattner/vdpau/libvdpau-1.2.tar.bz2"
+    tar -xvf "libvdpau-1.2.tar.bz2"
+    cd libvdpau-1.2
+    ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
+    make
+    make install
+}    
+
 compileFfmpeg(){
     echo "Compiling ffmpeg"
     Clone https://github.com/FFmpeg/FFmpeg -b master
@@ -634,6 +643,7 @@ compileLibtheora
 compileFreetype
 compileLibpng
 compileLibogg
+compileLibvdpau
 compileFfmpeg
 
 echo "Complete!"
