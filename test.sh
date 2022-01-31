@@ -486,6 +486,16 @@ compileFontconfig() {
     Wget "https://www.freedesktop.org/software/fontconfig/release/fontconfig-2.13.94.tar.xz"
     tar -xvf "fontconfig-2.13.94.tar.xz"
     cd fontconfig-2.13.94
+    ./configure --prefix="$DEST_DIR" --disable-shared --enable-static --disable-docs
+    make
+    make install
+}
+
+compileLibtheora() {
+    echo "Compiling LibTheora"
+    Wget "https://downloads.xiph.org/releases/theora/libtheora-1.1.1.tar.xz"
+    tar -xvf "libtheora-1.1.1.tar.xz"
+    cd libtheora-1.1.1
     ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
     make
     make install
@@ -587,6 +597,7 @@ compileSDL2
 compilelibxcb
 compilelibXv
 compileFontconfig
+compileLibtheora
 compileFfmpeg
 
 echo "Complete!"
