@@ -53,9 +53,8 @@ installAptLibs() {
     sudo apt-get update
     sudo apt-get -y --force-yes install $PKGS \
       build-essential pkg-config texi2html software-properties-common \
-      libfreetype6-dev libgpac-dev libsdl1.2-dev libva-dev python-xcbgen xcb-proto \
-      libvdpau-dev libvorbis-dev libxcb1-dev libxcb-shm0-dev libxcb-xfixes0-dev libfribidi-dev  libssl-dev zlib1g-dev \
-      python-dev liblzma-dev libtool-bin
+      libfreetype6-dev libgpac-dev libva-dev python-xcbgen xcb-proto \
+      libvdpau-dev zlib1g-dev python-dev liblzma-dev libtool-bin
 }
 
 installYumLibs() {
@@ -486,10 +485,33 @@ compileFontconfig() {
     Wget "https://www.freedesktop.org/software/fontconfig/release/fontconfig-2.13.94.tar.xz"
     tar -xvf "fontconfig-2.13.94.tar.xz"
     cd fontconfig-2.13.94
-    ./configure --prefix="$DEST_DIR" --disable-shared --enable-static --disable-docs
+    export PKG_CONFIG="pkg-config --static" 
+    ./configure --prefix="$DEST_DIR" --disable-shared --enable-static --disable-docs 
     make
     make install
+    unset PKG_CONFIG
 }
+compileFreetype() {
+     echo "compiling Freetype"
+     Wget "https://downloads.sourceforge.net/freetype/freetype-2.11.1.tar.xz"
+     tar -xvf "freetype-2.11.1.tar.xz"
+     cd freetype-2.11.1
+     sed -ri "s:.*(AUX_MODULES.*valid):\1:" modules.cfg
+     sed -r "s:.*(#.*SUBPIXEL_RENDERING) .*:\1:" -i include/freetype/config/ftoption.h
+     ./configure --prefix="$DEST_DIR" --disable-shared --enable-static --enable-freetype-config --without-harfbuzz
+     make
+     make install
+}
+compileLibpng() {
+     echo "compiling Libpnb"
+     Wget "https://downloads.sourceforge.net/libpng/libpng-1.6.37.tar.xz"
+     tar -xvf "libpng-1.6.37.tar.xz"
+     cd libpng-1.6.37
+     ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
+     make
+     make install
+}
+
 
 compileLibtheora() {
     echo "Compiling LibTheora"
@@ -598,6 +620,8 @@ compilelibxcb
 compilelibXv
 compileFontconfig
 compileLibtheora
+compileFreetype
+compileLibpng
 compileFfmpeg
 
 echo "Complete!"
