@@ -522,6 +522,17 @@ compileLibtheora() {
     make
     make install
 }
+
+compileLibogg() {
+    echo "Compiling Libogg"
+    Wget "https://downloads.xiph.org/releases/ogg/libogg-1.3.5.tar.xz"
+    tar -xvf "libogg-1.3.5.tar.xz"
+    cd libogg-1.3.5
+    ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
+    make
+    make install
+}
+    
      
 compileFfmpeg(){
     echo "Compiling ffmpeg"
@@ -622,6 +633,7 @@ compileFontconfig
 compileLibtheora
 compileFreetype
 compileLibpng
+compileLibogg
 compileFfmpeg
 
 echo "Complete!"
