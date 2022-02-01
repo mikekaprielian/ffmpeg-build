@@ -539,7 +539,18 @@ compileLibvdpau() {
     ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
     make
     make install
-}    
+}
+
+compileLibdrm() {
+    echo "Compiling Libdrm"
+    Wget "https://dri.freedesktop.org/libdrm/libdrm-2.4.109.tar.xz"
+    tar -xvf "libdrm-2.4.109.tar.xz"
+    cd libdrm-2.4.109
+    apt-get -y install libpciaccess-dev 
+    ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
+    make
+    make install
+}
 
 compileFfmpeg(){
     echo "Compiling ffmpeg"
