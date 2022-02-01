@@ -53,8 +53,8 @@ installAptLibs() {
     sudo apt-get update
     sudo apt-get -y --force-yes install $PKGS \
       build-essential pkg-config texi2html software-properties-common \
-      libfreetype6-dev libgpac-dev libva-dev python-xcbgen xcb-proto \
-      libvdpau-dev zlib1g-dev python-dev liblzma-dev libtool-bin
+       libgpac-dev libva-dev python-xcbgen xcb-proto \
+       zlib1g-dev python-dev liblzma-dev libtool-bin
 }
 
 installYumLibs() {
@@ -399,9 +399,7 @@ compileLibmfx() {
      make install
      libtool --finish "$DEST_DIR"/lib
      ldconfig
-     apt-get install -y ocl-icd-opencl-dev opencl-headers
-     apt-get install -y libva-dev vainfo
-
+     apt-get install -y ocl-icd-opencl-dev opencl-headers libva-dev vainfo
 }
 
 compileLibdav1d() {
