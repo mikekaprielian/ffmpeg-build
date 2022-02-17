@@ -3,6 +3,10 @@
 * This script will compile and install a static ffmpeg build with [nvenc](https://en.wikipedia.org/wiki/Nvidia_NVENC) support.
 * Modify the prefix path and compile options in the script body to suit your needs.
 * CUDA , NPP (scale_cuda/scale_npp) included
+* QSV included
+* VAAPI included
+
+CUDA and VAAPI doesn't come with static build so you would need to install the Nvidia CUDA and libav-dev packages. 
 
 ### Supported OS'es:
 
