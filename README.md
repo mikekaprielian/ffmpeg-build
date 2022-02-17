@@ -15,12 +15,12 @@ CUDA and VAAPI doesn't come with static build so you would need to install the N
 * LinuxMint 19.1
 * CentOS 7
 
-### Libavformat Patch for Xtream-UI
+### segment.c Patch for Xtream-UI
 
 * I included the patch required for ffmpeg to function with Xtream-UI after compiling and updating to the lastest version.
-* patch works for ffmpeg 4.3.1/4.3.2
-* added patch for ffmpeg 4.4
-* added patch for ffmpeg 5.0
+* patch available for ffmpeg 4.3.1/4.3.2
+* patch available for ffmpeg 4.4
+* patch available for ffmpeg 5.0
 
 ### Based on:
 
