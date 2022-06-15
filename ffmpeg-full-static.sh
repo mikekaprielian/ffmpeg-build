@@ -553,7 +553,6 @@ compileLibdrm() {
 }
 
 compilelibzvbi() {
-
     echo "Compiling Libzvbi"
     wget "https://versaweb.dl.sourceforge.net/project/zapping/zvbi/0.2.35/zvbi-0.2.35.tar.bz2"
     tar -xvf "zvbi-0.2.35.tar.bz2"
