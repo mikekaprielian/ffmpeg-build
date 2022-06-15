@@ -552,6 +552,16 @@ compileLibdrm() {
     make install
 }
 
+compilelibzvbi() {
+
+    echo "Compiling Libzvbi"
+    wget "https://versaweb.dl.sourceforge.net/project/zapping/zvbi/0.2.35/zvbi-0.2.35.tar.bz2"
+    tar -xvf "zvbi-0.2.35.tar.bz2"
+    cd zvbi-0.2.35.tar.bz2
+    ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
+    make
+    make install
+
 compileFfmpeg(){
     echo "Compiling ffmpeg"
     Clone https://github.com/FFmpeg/FFmpeg -b master
@@ -603,6 +613,7 @@ compileFfmpeg(){
       --enable-libzimg \
       --enable-libmfx \
       --enable-libxvid \
+      --enable-libzvbi \
       --enable-libopencore-amrnb \
       --enable-libopencore-amrwb \
       --enable-libvo-amrwbenc \
