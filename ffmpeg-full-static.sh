@@ -560,6 +560,15 @@ compilelibzvbi() {
     ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
     make
     make install
+    
+compileffnvcodec() {
+    echo "Compiling ffnvcodec"
+    wget "https://github.com/FFmpeg/nv-codec-headers/releases/download/n11.1.5.2/nv-codec-headers-11.1.5.2.tar.gz"
+    tar -xvf nv-codec-headers-11.1.5.2.tar.gz
+    cd nv-codec-headers
+    ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
+    make
+    make install
 
 compileFfmpeg(){
     echo "Compiling ffmpeg"
@@ -642,6 +651,7 @@ compileLibAss
 compileOpenSSL
 compileHarfbuzz
 compileFribidi
+compileffnvcodec
 #compileLibrtmp not working yet (--enable-librtmp cannot be used yet)
 compileLibSoxr
 compileLibvidstab
