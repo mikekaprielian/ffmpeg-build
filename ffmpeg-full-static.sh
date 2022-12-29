@@ -576,7 +576,7 @@ compileFfmpeg(){
     patch --force -d "$WORK_DIR" -p1 < "$MYDIR/libavformat-5.1-patch-xtream-ui.patch"
 
     export PATH="$CUDA_DIR/bin:$PATH"  # ..path to nvcc
-    PATH="$DEST_DIR/bin:$PATH" PKG_CONFIG_PATH="$DEST_DIR/lib/pkgconfig:$DEST_DIR/lib64/pkgconfig" \
+    PATH="$DEST_DIR/bin:$PATH" PKG_CONFIG_PATH="$DEST_DIR/lib/pkgconfig:$CUDA_DIR/lib64/pkgconfig" \
     ./configure \
       --pkg-config-flags="--static" \
       --prefix="$DEST_DIR" \
