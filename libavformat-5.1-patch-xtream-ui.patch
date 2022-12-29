@@ -1,5 +1,5 @@
---- muxers.texi	2022-12-29 13:49:11.230996181 +0000
-+++ muxers.texi.new	2022-12-29 14:17:51.292623817 +0000
+--- ffmpeg-build-static-sources/FFmpeg/doc/muxers.texi	2022-12-29 13:49:11.230996181 +0000
++++ ffmpeg-build-static-sources/FFmpeg/doc/muxers.texi	2022-12-29 14:17:51.292623817 +0000
 @@ -2306,6 +2306,11 @@
  
  @item live
@@ -14,8 +14,8 @@
  @item segment_list_size @var{size}
 
 
---- segment.c	2022-12-29 13:49:12.370988784 +0000
-+++ segment.c.new	2022-12-29 14:14:24.113679696 +0000
+--- ffmpeg-build-static-sources/FFmpeg/libavformat/segment.c	2022-12-29 13:49:12.370988784 +0000
++++ ffmpeg-build-static-sources/FFmpeg/libavformat/segment.c	2022-12-29 14:14:24.113679696 +0000
 @@ -25,10 +25,16 @@
   */
  
