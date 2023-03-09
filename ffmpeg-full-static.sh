@@ -682,6 +682,7 @@ compileLibspeex
 compileLibxml
 compileLibdav1d
 compileLibxvidcore
+compileLibopencore
 compileSDL2
 compilelibxcb
 compilelibXv
