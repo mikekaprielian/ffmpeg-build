@@ -683,6 +683,7 @@ compileLibxml
 compileLibdav1d
 compileLibxvidcore
 compileLibopencore
+compileLibvoamrwb
 compileSDL2
 compilelibxcb
 compilelibXv
