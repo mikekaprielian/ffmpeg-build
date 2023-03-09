@@ -419,11 +419,10 @@ compileLibxvidcore() {
      Wget "https://downloads.xvid.com/downloads/xvidcore-1.3.7.tar.gz"
      tar -xvf "xvidcore-1.3.7.tar.gz"
      cd xvidcore/build/generic
-     sed -i 's/^LN_S=@LN_S@/& -f -v/' platform.inc.in
-     ./configure --prefix="$DEST_DIR" --disable-assembly
+     ./configure --prefix="$DEST_DIR" --enable-static --disable-shared
      make
      make install
-     rm "$DEST_DIR"/lib/libxvidcore.so*
+
 }
 
 compileLibopencore() {
