@@ -422,7 +422,7 @@ compileLibxvidcore() {
      ./configure --prefix="$DEST_DIR" --enable-static --disable-shared
      make
      make install
-
+     rm "$DEST_DIR"/lib/libxvidcore.so.*
 }
 
 compileLibopencore() {
