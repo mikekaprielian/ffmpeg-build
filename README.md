@@ -30,8 +30,8 @@ CUDA and VAAPI doesn't come with static build so you would need to install the N
 
 Enjoy! :-)
 
-If ffmpeg keeps saying packages not found while trying to compile use the following commands. This needs to be done everytime you restart your computer. 
+### If ffmpeg keeps saying packages not found while trying to compile use the following commands. This needs to be done everytime you restart your computer:
 
-export PATH="/usr/local/cuda/bin:/root/ffmpeg-build-static-binaries:$PATH"
-export PKG_CONFIG_PATH="/root/ffmpeg-build-static-binaries/lib/pkgconfig"
+ * export PATH="/usr/local/cuda/bin:/root/ffmpeg-build-static-binaries:$PATH"
+ * export PKG_CONFIG_PATH="/root/ffmpeg-build-static-binaries/lib/pkgconfig"
 
