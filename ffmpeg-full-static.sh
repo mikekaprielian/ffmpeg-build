@@ -554,13 +554,27 @@ compileLibdrm() {
 
 compilelibzvbi() {
     echo "Compiling Libzvbi"
-    wget "https://versaweb.dl.sourceforge.net/project/zapping/zvbi/0.2.35/zvbi-0.2.35.tar.bz2"
+    Wget "https://versaweb.dl.sourceforge.net/project/zapping/zvbi/0.2.35/zvbi-0.2.35.tar.bz2"
     tar -xvf "zvbi-0.2.35.tar.bz2"
     cd zvbi-0.2.35.tar.bz2
     ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
     make
     make install
     
+}
+
+compileFrei0r() {
+
+   echo "Compiling Frei0r"
+   Wget "https://files.dyne.org/frei0r/releases/frei0r-plugins-1.8.0.tar.gz"
+   tar -xvf "frei0r-plugins-1.8.0.tar.gz"
+   cd frei0r-plugins-1.8.0
+   mkdir -vp build
+   cd build
+
+   cmake -DCMAKE_INSTALL_PREFIX="$DEST_DIR" -DCMAKE_BUILD_TYPE=Release -DWITHOUT_OPENCV=TRUE -DWITHOUT_GAVL=TRUE -Wno-dev ..
+   make
+   make install
 }
     
 compileffnvcodec() {
@@ -677,6 +691,7 @@ compileFreetype
 compileLibpng
 compileLibogg
 compileLibvdpau
+compileFrei0r
 compileFfmpeg
 
 echo "Complete!"
