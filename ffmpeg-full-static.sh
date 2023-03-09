@@ -579,9 +579,9 @@ compileFrei0r() {
     
 compileffnvcodec() {
     echo "Compiling ffnvcodec"
-    Wget "https://github.com/FFmpeg/nv-codec-headers/releases/download/n11.1.5.0/nv-codec-headers-11.1.5.0.tar.gz"
-    tar -xvf nv-codec-headers-11.1.5.0.tar.gz
-    cd nv-codec-headers-11.1.5.0
+    Wget "https://github.com/FFmpeg/nv-codec-headers/releases/download/n11.1.5.0/nv-codec-headers-11.1.5.2.tar.gz"
+    tar -xvf nv-codec-headers-11.1.5.2.tar.gz
+    cd nv-codec-headers-11.1.5.2
     sed -i 's/\/usr\/local/\/root\/ffmpeg-build-static-binaries/g' Makefile
     make
     make install
