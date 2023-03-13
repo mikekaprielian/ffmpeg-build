@@ -61,7 +61,7 @@
 +    char *path = NULL;
 +    segment = seg->segment_list_entries;
 +    while (segment) {
-+        playlist_duration = segment->end_time - segment->start_time;
++        playlist_duration += segment->end_time - segment->start_time;
 +        segment = segment->next;
 +    }
 +    segment = seg->segment_list_old;
@@ -86,7 +86,7 @@
 +    while (segment) {
 +        av_log(seg, AV_LOG_DEBUG, "deleting old segment %s\n",
 +                                  segment->filename);
-+        path_size = strlen(dirname)  strlen(segment->filename)  1;
++        path_size = strlen(dirname) + strlen(segment->filename) + 1;
 +        path = av_malloc(path_size);
 +        if (!path) {
 +            ret = AVERROR(ENOMEM);
