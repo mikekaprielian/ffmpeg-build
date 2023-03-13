@@ -149,9 +149,9 @@
  
 -     if (!oc)
 +     if (!oc) {
--         return 0;
-+        goto fail;
-+        }
++       goto fail;
+        return 0;
++     }
 +
      if (!seg->write_header_trailer) {
          if ((ret = segment_end(s, 0, 1)) < 0)
