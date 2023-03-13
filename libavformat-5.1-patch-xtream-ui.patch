@@ -14,8 +14,8 @@
  @item segment_list_size @var{size}
 
 
---- ffmpeg-build-static-sources/FFmpeg/libavformat/segment.c	2022-12-29 13:49:12.370988784 +0000
-+++ ffmpeg-build-static-sources/FFmpeg/libavformat/segment.c	2022-12-29 14:14:24.113679696 +0000
+--- ffmpeg-build-static-sources/FFmpeg/libavformat/segment.c	2023-03-13 17:36:09.000000000 +0000
++++ ffmpeg-build-static-sources/FFmpeg/libavformat/segment.c	2023-03-13 17:42:45.704760889 +0000
 @@ -25,10 +25,15 @@
   */
  
