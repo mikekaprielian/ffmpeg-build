@@ -35,6 +35,11 @@ SDL2_VERSION="2.26.4"
 XCB_VERSION="1.13"
 XV_VERSION="1.0.12"
 FONTC_VERSION="2.14.2"
+FREETYPE_VERSION="2.13.0"
+LIBPNG_VERSION="1.6.39"
+THEORA_VERSION="1.1.1"
+VDPAU_VERSION="1.2"
+DRM_VERSION="2.4.115"
 
 CUDA_RPM_VER="-10-1"
 CUDA_REPO_KEY="http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/7fa2af80.pub"
@@ -511,9 +516,9 @@ compileFontconfig() {
 }
 compileFreetype() {
      echo "compiling Freetype"
-     Wget "https://downloads.sourceforge.net/freetype/freetype-2.13.0.tar.xz"
-     tar -xvf "freetype-2.13.0.tar.xz"
-     cd freetype-2.13.0
+     Wget "https://downloads.sourceforge.net/freetype/freetype-$FREETYPE_VERSION.tar.xz"
+     tar -xvf "freetype-$FREETYPE_VERSION.tar.xz"
+     cd freetype-$FREETYPE_VERSION
      sed -ri "s:.*(AUX_MODULES.*valid):\1:" modules.cfg
      sed -r "s:.*(#.*SUBPIXEL_RENDERING) .*:\1:" -i include/freetype/config/ftoption.h
      ./configure --prefix="$DEST_DIR" --disable-shared --enable-static --enable-freetype-config --without-harfbuzz
@@ -522,9 +527,9 @@ compileFreetype() {
 }
 compileLibpng() {
      echo "compiling Libpnb"
-     Wget "https://downloads.sourceforge.net/libpng/libpng-1.6.39.tar.xz"
-     tar -xvf "libpng-1.6.39.tar.xz"
-     cd libpng-1.6.39
+     Wget "https://downloads.sourceforge.net/libpng/libpng-$LIBPNG_VERSION.tar.xz"
+     tar -xvf "libpng-$LIBPNG_VERSION.tar.xz"
+     cd libpng-$LIBPNG
      ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
      make
      make install
@@ -533,29 +538,19 @@ compileLibpng() {
 
 compileLibtheora() {
     echo "Compiling LibTheora"
-    Wget "https://downloads.xiph.org/releases/theora/libtheora-1.1.1.tar.xz"
-    tar -xvf "libtheora-1.1.1.tar.xz"
-    cd libtheora-1.1.1
+    Wget "https://downloads.xiph.org/releases/theora/libtheora-$THEORA_VERSION.tar.xz"
+    tar -xvf "libtheora-$THEORA_VERSION.tar.xz"
+    cd libtheora-$THEORA_VERSION
     ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
     make
     make install
 }
 
-compileLibogg() {
-    echo "Compiling Libogg"
-    Wget "https://downloads.xiph.org/releases/ogg/libogg-1.3.5.tar.xz"
-    tar -xvf "libogg-1.3.5.tar.xz"
-    cd libogg-1.3.5
-    ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
-    make
-    make install
-}
-    
 compileLibvdpau() {
     echo "Compiling Libvdpau"
-    Wget "https://people.freedesktop.org/~aplattner/vdpau/libvdpau-1.2.tar.bz2"
-    tar -xvf "libvdpau-1.2.tar.bz2"
-    cd libvdpau-1.2
+    Wget "https://people.freedesktop.org/~aplattner/vdpau/libvdpau-$VDPAU_VERSION.tar.bz2"
+    tar -xvf "libvdpau-$VDPAU_VERSION.tar.bz2"
+    cd libvdpau-$VDPAU_VERSION
     ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
     make
     make install
@@ -563,9 +558,9 @@ compileLibvdpau() {
 
 compileLibdrm() {
     echo "Compiling Libdrm"
-    Wget "https://dri.freedesktop.org/libdrm/libdrm-2.4.115.tar.xz"
-    tar -xvf "libdrm-2.4.115.tar.xz"
-    cd libdrm-2.4.115
+    Wget "https://dri.freedesktop.org/libdrm/libdrm-$DRM_VERSION.tar.xz"
+    tar -xvf "libdrm-$DRM_VERSION.tar.xz"
+    cd libdrm-$DRM_VERSION
     apt-get -y install libpciaccess-dev 
     ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
     make
@@ -711,7 +706,6 @@ compileFontconfig
 compileLibtheora
 compileFreetype
 compileLibpng
-compileLibogg
 compileLibvdpau
 compileFrei0r
 compileFfmpeg
