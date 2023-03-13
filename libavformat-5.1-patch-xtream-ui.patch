@@ -147,10 +147,12 @@
 +    SegmentListEntry *cur, *next;
      int ret;
  
-     if (!oc)
-         return 0;
+-     if (!oc)
++     if (!oc) {
+-         return 0;
 +        goto fail;
- 
++        }
++
      if (!seg->write_header_trailer) {
          if ((ret = segment_end(s, 0, 1)) < 0)
              return ret;
