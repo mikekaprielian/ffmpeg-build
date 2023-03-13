@@ -1,6 +1,6 @@
 --- ffmpeg-build-static-sources/FFmpeg/doc/muxers.texi	2022-12-29 13:49:11.230996181 +0000
 +++ ffmpeg-build-static-sources/FFmpeg/doc/muxers.texi	2022-12-29 14:17:51.292623817 +0000
-@@ -2306,6 +2306,11 @@
+@@ -2304,6 +2306,11 @@
  
  @item live
  Allow live-friendly file generation.
