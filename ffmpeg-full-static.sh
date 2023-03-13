@@ -30,7 +30,7 @@ SPEEX_VERSION="1.2.1"
 XML2_VERSION="2.9.12"
 XVID_VERSION="1.3.7"
 AMR_VERSION="0.1.6"
-ARMWB_VERSION="0.1.3"
+AMRWB_VERSION="0.1.3"
 SDL2_VERSION="2.26.4"
 XCB_VERSION="1.13"
 XV_VERSION="1.0.12"
@@ -339,7 +339,7 @@ compileOpenJPEG() {
     mkdir -v build
     cd build
     cmake .. -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="$DEST_DIR" -DBUILD_SHARED_LIBS:bool=off
-    make 
+    make -j 4
     make install 
 }
 
@@ -421,7 +421,8 @@ compileLibxml() {
 
 compileLibmfx() {
      echo "Compiling Libmfx"
-     git clone https://github.com/lu-zero/mfx_dispatch.git
+     cd "$WORK_DIR/"
+     Clone https://github.com/lu-zero/mfx_dispatch.git
      cd mfx_dispatch
      autoreconf -fiv
      ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
@@ -433,9 +434,10 @@ compileLibmfx() {
 
 compileLibdav1d() {
      echo "compiling Libdav1d"
+     cd "$WORK_DIR/"
      sudo apt-get -y install python3-pip
      pip3 install --user meson
-     git -C dav1d pull 2> /dev/null || git clone --depth 1 https://code.videolan.org/videolan/dav1d.git
+     git -C dav1d pull 2> /dev/null || Clone https://code.videolan.org/videolan/dav1d.git
      mkdir -p dav1d/build
      cd dav1d/build
      meson setup -Denable_tools=false -Denable_tests=false --default-library=static .. --prefix "$DEST_DIR" --libdir="$DEST_DIR"/lib
@@ -445,6 +447,7 @@ compileLibdav1d() {
 
 compileLibxvidcore() {
      echo "compiling Libxvidcore"
+     cd "$WORK_DIR/"
      Wget "https://downloads.xvid.com/downloads/xvidcore-$XVID_VERSION.tar.gz"
      tar -xvf "xvidcore-$XVID_VERSION.tar.gz"
      cd xvidcore/build/generic
@@ -456,6 +459,7 @@ compileLibxvidcore() {
 
 compileLibopencore() {
      echo "compiling Libopencore armnb"
+     cd "$WORK_DIR/"
      Wget "https://versaweb.dl.sourceforge.net/project/opencore-amr/opencore-amr/opencore-amr-$AMR_VERSION.tar.gz"
      tar -xvf "opencore-amr-$AMR_VERSION.tar.gz"
      cd opencore-amr-$AMR_VERSION
@@ -466,7 +470,8 @@ compileLibopencore() {
 
 compileLibvoamrwb() {
      echo "compiling Libvoamrwb"
-     Wget "https://cfhcable.dl.sourceforge.net/project/opencore-amr/vo-amrwbenc/vo-amrwbenc-$AMRWB_VERSION.tar.gz"
+     cd "$WORK_DIR/"
+     Wget "https://gigenet.dl.sourceforge.net/project/opencore-amr/vo-amrwbenc/vo-amrwbenc-$AMRWB_VERSION.tar.gz"
      tar -xvf "vo-amrwbenc-$AMRWB_VERSION.tar.gz"
      cd vo-amrwbenc-$AMRWB_VERSION
      ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
@@ -476,6 +481,7 @@ compileLibvoamrwb() {
 
 compileSDL2() {
      echo "compiling SDL2"
+     cd "$WORK_DIR/"
      Wget "https://www.libsdl.org/release/SDL2-$SDL2_VERSION.tar.gz"
      tar -xvf "SDL2-$SDL2_VERSION.tar.gz"
      cd SDL2-$SDL2_VERSION
@@ -486,6 +492,7 @@ compileSDL2() {
 
 compilelibxcb() {
      echo "compiling LibXCB"
+     cd "$WORK_DIR/"
      Wget "https://xcb.freedesktop.org/dist/libxcb-$XCB_VERSION.tar.bz2"
      tar -xvf "libxcb-$XCB_VERSION.tar.bz2"
      cd libxcb-$XCB_VERSION
@@ -498,6 +505,7 @@ compilelibxcb() {
 
 compilelibXv() {
      echo "compiling LibXv"
+     cd "$WORK_DIR/"
      Wget "https://www.x.org/releases/individual/lib/libXv-$XV_VERSION.tar.gz"
      tar -xvf "libXv-$XV_VERSION.tar.gz"
      cd libXv-$XV_VERSION
@@ -507,18 +515,20 @@ compilelibXv() {
 }
 
 compileFontconfig() {
-    echo "compiling Fontconfig"
-    Wget "https://www.freedesktop.org/software/fontconfig/release/fontconfig-$FONTC_VERSION.tar.xz"
-    tar -xvf "fontconfig-$FONTC_VERSION.tar.xz"
-    cd fontconfig-$FONTC_VERSION
-    export PKG_CONFIG="pkg-config --static" 
-    ./configure --prefix="$DEST_DIR" --disable-shared --enable-static --disable-docs 
-    make
-    make install
-    unset PKG_CONFIG
+     echo "compiling Fontconfig"
+     cd "$WORK_DIR/"
+     Wget "https://www.freedesktop.org/software/fontconfig/release/fontconfig-$FONTC_VERSION.tar.xz"
+     tar -xvf "fontconfig-$FONTC_VERSION.tar.xz"
+     cd fontconfig-$FONTC_VERSION
+     export PKG_CONFIG="pkg-config --static" 
+     ./configure --prefix="$DEST_DIR" --disable-shared --enable-static --disable-docs 
+     make
+     make install
+     unset PKG_CONFIG
 }
 compileFreetype() {
      echo "compiling Freetype"
+     cd "$WORK_DIR/"
      Wget "https://downloads.sourceforge.net/freetype/freetype-$FREETYPE_VERSION.tar.xz"
      tar -xvf "freetype-$FREETYPE_VERSION.tar.xz"
      cd freetype-$FREETYPE_VERSION
@@ -530,6 +540,7 @@ compileFreetype() {
 }
 compileLibpng() {
      echo "compiling Libpnb"
+     cd "$WORK_DIR/"
      Wget "https://downloads.sourceforge.net/libpng/libpng-$LIBPNG_VERSION.tar.xz"
      tar -xvf "libpng-$LIBPNG_VERSION.tar.xz"
      cd libpng-$LIBPNG
@@ -541,6 +552,7 @@ compileLibpng() {
 
 compileLibtheora() {
     echo "Compiling LibTheora"
+    cd "$WORK_DIR/"
     Wget "https://downloads.xiph.org/releases/theora/libtheora-$THEORA_VERSION.tar.xz"
     tar -xvf "libtheora-$THEORA_VERSION.tar.xz"
     cd libtheora-$THEORA_VERSION
@@ -551,6 +563,7 @@ compileLibtheora() {
 
 compileLibvdpau() {
     echo "Compiling Libvdpau"
+    cd "$WORK_DIR/"
     Wget "https://people.freedesktop.org/~aplattner/vdpau/libvdpau-$VDPAU_VERSION.tar.bz2"
     tar -xvf "libvdpau-$VDPAU_VERSION.tar.bz2"
     cd libvdpau-$VDPAU_VERSION
@@ -560,49 +573,53 @@ compileLibvdpau() {
 }
 
 compileLibdrm() {
-    echo "Compiling Libdrm"
-    Wget "https://dri.freedesktop.org/libdrm/libdrm-$DRM_VERSION.tar.xz"
-    tar -xvf "libdrm-$DRM_VERSION.tar.xz"
-    cd libdrm-$DRM_VERSION
-    apt-get -y install libpciaccess-dev 
-    ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
-    make
-    make install
+     echo "Compiling Libdrm"
+     cd "$WORK_DIR/"
+     Wget "https://dri.freedesktop.org/libdrm/libdrm-$DRM_VERSION.tar.xz"
+     tar -xvf "libdrm-$DRM_VERSION.tar.xz"
+     cd libdrm-$DRM_VERSION
+     apt-get -y install libpciaccess-dev 
+     ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
+     make
+     make install
 }
 
 compilelibzvbi() {
-    echo "Compiling Libzvbi"
-    Wget "https://versaweb.dl.sourceforge.net/project/zapping/zvbi/$ZVBI_VERSION/zvbi-$ZVBI_VERSION.tar.bz2"
-    tar -xvf "zvbi-$ZVBI_VERSION.tar.bz2"
-    cd zvbi-$ZVBI_VERSION.tar.bz2
-    ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
-    make
-    make install
+     echo "Compiling Libzvbi"
+     cd "$WORK_DIR/"
+     Wget "https://versaweb.dl.sourceforge.net/project/zapping/zvbi/$ZVBI_VERSION/zvbi-$ZVBI_VERSION.tar.bz2"
+     tar -xvf "zvbi-$ZVBI_VERSION.tar.bz2"
+     cd zvbi-$ZVBI_VERSION.tar.bz2
+     ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
+     make
+     make install
     
 }
 
 compileFrei0r() {
 
-   echo "Compiling Frei0r"
-   Wget "https://files.dyne.org/frei0r/releases/frei0r-plugins-$FREI0R_VERSION.tar.gz"
-   tar -xvf "frei0r-plugins-$FREI0R_VERSION.tar.gz"
-   cd frei0r-plugins-$FREI0R_VERSION
-   mkdir -vp build
-   cd build
+     echo "Compiling Frei0r"
+     cd "$WORK_DIR/"
+     Wget "https://files.dyne.org/frei0r/releases/frei0r-plugins-$FREI0R_VERSION.tar.gz"
+     tar -xvf "frei0r-plugins-$FREI0R_VERSION.tar.gz"
+     cd frei0r-plugins-$FREI0R_VERSION
+     mkdir -vp build
+     cd build
 
-   cmake -DCMAKE_INSTALL_PREFIX="$DEST_DIR" -DCMAKE_BUILD_TYPE=Release -DWITHOUT_OPENCV=TRUE -DWITHOUT_GAVL=TRUE -Wno-dev ..
-   make
-   make install
+     cmake -DCMAKE_INSTALL_PREFIX="$DEST_DIR" -DCMAKE_BUILD_TYPE=Release -DWITHOUT_OPENCV=TRUE -DWITHOUT_GAVL=TRUE -Wno-dev ..
+     make
+     make install
 }
     
 compileffnvcodec() {
-    echo "Compiling ffnvcodec"
-    Wget "https://github.com/FFmpeg/nv-codec-headers/releases/download/n$FFNVCODEC_VERSION/nv-codec-headers-$FFNVCODEC_VERSION.tar.gz"
-    tar -xvf nv-codec-headers-$FFNVCODEC_VERSION.tar.gz
-    cd nv-codec-headers-$FFNVCODEC_VERSION
-    sed -i 's/\/usr\/local/\/root\/ffmpeg-build-static-binaries/g' Makefile
-    make
-    make install
+     echo "Compiling ffnvcodec"
+     cd "$WORK_DIR/"
+     Wget "https://github.com/FFmpeg/nv-codec-headers/releases/download/n$FFNVCODEC_VERSION/nv-codec-headers-$FFNVCODEC_VERSION.tar.gz"
+     tar -xvf nv-codec-headers-$FFNVCODEC_VERSION.tar.gz
+     cd nv-codec-headers-$FFNVCODEC_VERSION
+     sed -i 's/\/usr\/local/\/root\/ffmpeg-build-static-binaries/g' Makefile
+     make
+     make install
     
 }
 
