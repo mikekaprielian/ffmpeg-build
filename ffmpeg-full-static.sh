@@ -40,6 +40,9 @@ LIBPNG_VERSION="1.6.39"
 THEORA_VERSION="1.1.1"
 VDPAU_VERSION="1.2"
 DRM_VERSION="2.4.115"
+ZVBI_VERSION="0.2.35"
+FREI0R_VERSION="1.8.0"
+FFNVCODEC_VERSION="11.1.5.2"
 
 CUDA_RPM_VER="-10-1"
 CUDA_REPO_KEY="http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/7fa2af80.pub"
@@ -569,9 +572,9 @@ compileLibdrm() {
 
 compilelibzvbi() {
     echo "Compiling Libzvbi"
-    Wget "https://versaweb.dl.sourceforge.net/project/zapping/zvbi/0.2.35/zvbi-0.2.35.tar.bz2"
-    tar -xvf "zvbi-0.2.35.tar.bz2"
-    cd zvbi-0.2.35.tar.bz2
+    Wget "https://versaweb.dl.sourceforge.net/project/zapping/zvbi/$ZVBI_VERSION/zvbi-$ZVBI_VERSION.tar.bz2"
+    tar -xvf "zvbi-$ZVBI_VERSION.tar.bz2"
+    cd zvbi-$ZVBI_VERSION.tar.bz2
     ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
     make
     make install
@@ -581,9 +584,9 @@ compilelibzvbi() {
 compileFrei0r() {
 
    echo "Compiling Frei0r"
-   Wget "https://files.dyne.org/frei0r/releases/frei0r-plugins-1.8.0.tar.gz"
-   tar -xvf "frei0r-plugins-1.8.0.tar.gz"
-   cd frei0r-plugins-1.8.0
+   Wget "https://files.dyne.org/frei0r/releases/frei0r-plugins-$FREI0R_VERSION.tar.gz"
+   tar -xvf "frei0r-plugins-$FREI0R_VERSION.tar.gz"
+   cd frei0r-plugins-$FREI0R_VERSION
    mkdir -vp build
    cd build
 
@@ -594,9 +597,9 @@ compileFrei0r() {
     
 compileffnvcodec() {
     echo "Compiling ffnvcodec"
-    Wget "https://github.com/FFmpeg/nv-codec-headers/releases/download/n11.1.5.2/nv-codec-headers-11.1.5.2.tar.gz"
-    tar -xvf nv-codec-headers-11.1.5.2.tar.gz
-    cd nv-codec-headers-11.1.5.2
+    Wget "https://github.com/FFmpeg/nv-codec-headers/releases/download/n$FFNVCODEC_VERSION/nv-codec-headers-$FFNVCODEC_VERSION.tar.gz"
+    tar -xvf nv-codec-headers-$FFNVCODEC_VERSION.tar.gz
+    cd nv-codec-headers-$FFNVCODEC_VERSION
     sed -i 's/\/usr\/local/\/root\/ffmpeg-build-static-binaries/g' Makefile
     make
     make install
