@@ -9,11 +9,11 @@
 
 
 # Globals
-NASM_VERSION="2.15.03"
+NASM_VERSION="2.16"
 YASM_VERSION="1.3.0"
 LAME_VERSION="3.100"
 OPUS_VERSION="1.3.1"
-LASS_VERSION="0.15.2"
+LASS_VERSION="0.17.1"
 CUDA_VERSION="10.1.243-1"
 CUDA_RPM_VER="-10-1"
 CUDA_REPO_KEY="http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/7fa2af80.pub"
@@ -230,10 +230,10 @@ compileLibAss() {
 compileOpenSSL() {
     echo "Compiling openSSL"
     cd "$WORK_DIR/"
-    Wget "https://www.openssl.org/source/openssl-1.1.1h.tar.gz"
-    tar -xvf "openssl-1.1.1h.tar.gz"
-    cd "openssl-1.1.1h"
-    ./config --prefix="$DEST_DIR" --openssldir="$WORK_DIR"/openssl-1.1.1h --with-zlib-include="$WORK_DIR"/openssl-1.1.1h/include --with-zlib-lib="$WORK_DIR"/openssl-1.1.1h/lib no-shared zlib
+    Wget "https://www.openssl.org/source/openssl-1.1.1t.tar.gz"
+    tar -xvf "openssl-1.1.1t.tar.gz"
+    cd "openssl-1.1.1t"
+    ./config --prefix="$DEST_DIR" --openssldir="$WORK_DIR"/openssl-1.1.1t --with-zlib-include="$WORK_DIR"/openssl-1.1.1h/include --with-zlib-lib="$WORK_DIR"/openssl-1.1.1h/lib no-shared zlib
     make -j 4
     make install
 }
@@ -253,8 +253,8 @@ compileHarfbuzz() {
 compileFribidi() {
     echo "Compiling fribidi"
     cd "$WORK_DIR/"
-    Wget "https://github.com/fribidi/fribidi/releases/download/v1.0.11/fribidi-1.0.11.tar.xz"
-    tar -xvf "fribidi-1.0.11.tar.xz"
+    Wget "https://github.com/fribidi/fribidi/releases/download/v1.0.12/fribidi-1.0.12.tar.xz"
+    tar -xvf "fribidi-1.0.12.tar.xz"
     cd fribidi-*
     ./configure --prefix="$DEST_DIR" --disable-shared --enable-static --disable-docs
     make -j 4
@@ -291,8 +291,8 @@ compileLibSoxr() {
 compileLibvidstab() {
     echo "Compiling libvidstab"
     cd "$WORK_DIR/"
-    Wget "https://github.com/georgmartius/vid.stab/archive/v1.1.0.tar.gz"
-    tar -xvf "v1.1.0.tar.gz"
+    Wget "https://github.com/georgmartius/vid.stab/archive/v1.1.1.tar.gz"
+    tar -xvf "v1.1.1.tar.gz"
     cd vid.stab-*
     sed -i "s/vidstab SHARED/vidstab STATIC/" ./CMakeLists.txt
     PATH="$DEST_DIR/bin:$PATH" cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="$DEST_DIR" -DBUILD_SHARED_LIBS:bool=off -DWITH_OPENMP:bool=off
@@ -304,9 +304,9 @@ compileLibvidstab() {
 compileOpenJPEG() {
     echo "Compiling OpenJPEG"
     cd "$WORK_DIR/"
-    Wget "https://github.com/uclouvain/openjpeg/archive/refs/tags/v2.4.0.tar.gz"
-    tar -xvf "v2.4.0.tar.gz"
-    cd openjpeg-2.4.0
+    Wget "https://github.com/uclouvain/openjpeg/archive/refs/tags/v2.5.0.tar.gz"
+    tar -xvf "v2.5.0.tar.gz"
+    cd openjpeg-2.5.0
     mkdir -v build
     cd build
     cmake .. -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="$DEST_DIR" -DBUILD_SHARED_LIBS:bool=off
@@ -317,8 +317,8 @@ compileOpenJPEG() {
 compileZimg() {
     echo "Compiling Zimg"
     cd "$WORK_DIR/"
-    Wget "https://github.com/sekrit-twc/zimg/archive/refs/tags/release-3.0.3.tar.gz"
-    tar -xvf "release-3.0.3.tar.gz"
+    Wget "https://github.com/sekrit-twc/zimg/archive/refs/tags/release-3.0.4.tar.gz"
+    tar -xvf "release-3.0.4.tar.gz"
     cd zimg-release-*
     ./autogen.sh
     ./configure --enable-static  --prefix="$DEST_DIR" --disable-shared --enable-static
@@ -330,8 +330,8 @@ compileZimg() {
 compileLibwebp() {
     echo "Compiling libwebp"
     cd "$WORK_DIR/"
-    Wget "https://github.com/webmproject/libwebp/archive/refs/tags/v1.2.2.tar.gz"
-    tar -xvf "v1.2.2.tar.gz"
+    Wget "https://github.com/webmproject/libwebp/archive/refs/tags/v1.3.0.tar.gz"
+    tar -xvf "v1.3.0.tar.gz"
     cd libwebp*
     ./autogen.sh
     ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
@@ -368,9 +368,9 @@ compileLibogg() {
 compileLibspeex() {
     echo "Compiling libspeex"
     cd "$WORK_DIR/"
-    Wget "https://github.com/xiph/speex/archive/refs/tags/Speex-1.2.0.tar.gz"
-    tar -xvf "Speex-1.2.0.tar.gz"
-    cd speex-Speex-1.2.0
+    Wget "https://github.com/xiph/speex/archive/refs/tags/Speex-1.2.1.tar.gz"
+    tar -xvf "Speex-1.2.1.tar.gz"
+    cd speex-Speex-1.2.1
     ./autogen.sh
     ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
     make -j 4
@@ -427,9 +427,9 @@ compileLibxvidcore() {
 
 compileLibopencore() {
      echo "compiling Libopencore armwb armnb"
-     Wget "https://versaweb.dl.sourceforge.net/project/opencore-amr/opencore-amr/opencore-amr-0.1.5.tar.gz"
-     tar -xvf "opencore-amr-0.1.5.tar.gz"
-     cd opencore-amr-0.1.5
+     Wget "https://versaweb.dl.sourceforge.net/project/opencore-amr/opencore-amr/opencore-amr-0.1.6.tar.gz"
+     tar -xvf "opencore-amr-0.1.6.tar.gz"
+     cd opencore-amr-0.1.6
      ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
      make
      make install
@@ -447,9 +447,9 @@ compileLibvoamrwb() {
 
 compileSDL2() {
      echo "compiling SDL2"
-     Wget "https://www.libsdl.org/release/SDL2-2.0.14.tar.gz"
-     tar -xvf "SDL2-2.0.14.tar.gz"
-     cd SDL2-2.0.14
+     Wget "https://www.libsdl.org/release/SDL2-2.26.4.tar.gz"
+     tar -xvf "SDL2-2.26.4.tar.gz"
+     cd SDL2-2.26.4
      ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
      make
      make install
@@ -469,9 +469,9 @@ compilelibxcb() {
 
 compilelibXv() {
      echo "compiling LibXv"
-     Wget "https://www.x.org/releases/individual/lib/libXv-1.0.11.tar.gz"
-     tar -xvf "libXv-1.0.11.tar.gz"
-     cd libXv-1.0.11
+     Wget "https://www.x.org/releases/individual/lib/libXv-1.0.12.tar.gz"
+     tar -xvf "libXv-1.0.12.tar.gz"
+     cd libXv-1.0.12
      ./configure --prefix="$DEST_DIR" --disable-shared --enable-static --disable-docs
      make
      make install
@@ -479,9 +479,9 @@ compilelibXv() {
 
 compileFontconfig() {
     echo "compiling Fontconfig"
-    Wget "https://www.freedesktop.org/software/fontconfig/release/fontconfig-2.13.94.tar.xz"
-    tar -xvf "fontconfig-2.13.94.tar.xz"
-    cd fontconfig-2.13.94
+    Wget "https://www.freedesktop.org/software/fontconfig/release/fontconfig-2.14.2.tar.xz"
+    tar -xvf "fontconfig-2.14.2.tar.xz"
+    cd fontconfig-2.14.2
     export PKG_CONFIG="pkg-config --static" 
     ./configure --prefix="$DEST_DIR" --disable-shared --enable-static --disable-docs 
     make
@@ -490,9 +490,9 @@ compileFontconfig() {
 }
 compileFreetype() {
      echo "compiling Freetype"
-     Wget "https://downloads.sourceforge.net/freetype/freetype-2.11.1.tar.xz"
-     tar -xvf "freetype-2.11.1.tar.xz"
-     cd freetype-2.11.1
+     Wget "https://downloads.sourceforge.net/freetype/freetype-2.13.0.tar.xz"
+     tar -xvf "freetype-2.13.0.tar.xz"
+     cd freetype-2.13.0
      sed -ri "s:.*(AUX_MODULES.*valid):\1:" modules.cfg
      sed -r "s:.*(#.*SUBPIXEL_RENDERING) .*:\1:" -i include/freetype/config/ftoption.h
      ./configure --prefix="$DEST_DIR" --disable-shared --enable-static --enable-freetype-config --without-harfbuzz
@@ -501,9 +501,9 @@ compileFreetype() {
 }
 compileLibpng() {
      echo "compiling Libpnb"
-     Wget "https://downloads.sourceforge.net/libpng/libpng-1.6.37.tar.xz"
-     tar -xvf "libpng-1.6.37.tar.xz"
-     cd libpng-1.6.37
+     Wget "https://downloads.sourceforge.net/libpng/libpng-1.6.39.tar.xz"
+     tar -xvf "libpng-1.6.39.tar.xz"
+     cd libpng-1.6.39
      ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
      make
      make install
@@ -542,9 +542,9 @@ compileLibvdpau() {
 
 compileLibdrm() {
     echo "Compiling Libdrm"
-    Wget "https://dri.freedesktop.org/libdrm/libdrm-2.4.109.tar.xz"
-    tar -xvf "libdrm-2.4.109.tar.xz"
-    cd libdrm-2.4.109
+    Wget "https://dri.freedesktop.org/libdrm/libdrm-2.4.115.tar.xz"
+    tar -xvf "libdrm-2.4.115.tar.xz"
+    cd libdrm-2.4.115
     apt-get -y install libpciaccess-dev 
     ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
     make
@@ -578,7 +578,7 @@ compileFrei0r() {
     
 compileffnvcodec() {
     echo "Compiling ffnvcodec"
-    Wget "https://github.com/FFmpeg/nv-codec-headers/releases/download/n11.1.5.0/nv-codec-headers-11.1.5.2.tar.gz"
+    Wget "https://github.com/FFmpeg/nv-codec-headers/releases/download/n11.1.5.2/nv-codec-headers-11.1.5.2.tar.gz"
     tar -xvf nv-codec-headers-11.1.5.2.tar.gz
     cd nv-codec-headers-11.1.5.2
     sed -i 's/\/usr\/local/\/root\/ffmpeg-build-static-binaries/g' Makefile
