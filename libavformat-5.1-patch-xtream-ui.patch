@@ -16,18 +16,16 @@
 
 --- ffmpeg-build-static-sources/FFmpeg/libavformat/segment.c	2022-12-29 13:49:12.370988784 +0000
 +++ ffmpeg-build-static-sources/FFmpeg/libavformat/segment.c	2022-12-29 14:14:24.113679696 +0000
-@@ -25,10 +25,16 @@
-  */
+@@ -26,9 +26,15 @@
  
  #include "config_components.h"
--
+ 
 +#include "config.h"
 +#include <float.h>
  #include <time.h>
 +#if HAVE_UNISTD_H
 +#include <unistd.h>
 +#endif
-+
  
  #include "avformat.h"
 +#include "avio_internal.h"
@@ -42,7 +40,7 @@
  
  typedef struct SegmentContext {
      const AVClass *class;  /**< Class for private options. */
-@@ -125,6 +132,7 @@
+@@ -126,6 +133,7 @@
      SegmentListEntry cur_entry;
      SegmentListEntry *segment_list_entries;
      SegmentListEntry *segment_list_entries_end;
@@ -50,7 +48,7 @@
  } SegmentContext;
  
  static void print_csv_escaped_str(AVIOContext *ctx, const char *str)
-@@ -143,6 +151,65 @@
+@@ -144,6 +152,65 @@
          avio_w8(ctx, '"');
  }
  
@@ -63,7 +61,7 @@
 +    char *path = NULL;
 +    segment = seg->segment_list_entries;
 +    while (segment) {
-+        playlist_duration += segment->end_time - segment->start_time;
++        playlist_duration = segment->end_time - segment->start_time;
 +        segment = segment->next;
 +    }
 +    segment = seg->segment_list_old;
@@ -88,7 +86,7 @@
 +    while (segment) {
 +        av_log(seg, AV_LOG_DEBUG, "deleting old segment %s\n",
 +                                  segment->filename);
-+        path_size = strlen(dirname) + strlen(segment->filename) + 1;
++        path_size = strlen(dirname)  strlen(segment->filename)  1;
 +        path = av_malloc(path_size);
 +        if (!path) {
 +            ret = AVERROR(ENOMEM);
@@ -116,22 +114,7 @@
  static int segment_mux_init(AVFormatContext *s)
  {
      SegmentContext *seg = s->priv_data;
-@@ -168,9 +235,12 @@
-         AVStream *st, *ist = s->streams[i];
-         AVCodecParameters *ipar = ist->codecpar, *opar;
- 
--        st = ff_stream_clone(oc, ist);
--        if (!st)
-+        if (!(st = avformat_new_stream(oc, NULL)))
-+
-             return AVERROR(ENOMEM);
-+        ret = ff_stream_side_data_copy(st, ist);
-+        if (ret < 0)
-+            return ret;
-         opar = st->codecpar;
-         if (!oc->oformat->codec_tag ||
-             av_codec_get_id (oc->oformat->codec_tag, ipar->codec_tag) == opar->codec_id ||
-@@ -387,8 +457,16 @@
+@@ -392,8 +459,16 @@
              if (seg->list_size && seg->segment_count >= seg->list_size) {
                  entry = seg->segment_list_entries;
                  seg->segment_list_entries = seg->segment_list_entries->next;
@@ -144,20 +127,20 @@
 +                } else {
                  av_freep(&entry->filename);
                  av_freep(&entry);
-+                }
++              }
              }
  
              if ((ret = segment_list_open(s)) < 0)
-@@ -570,7 +648,7 @@
+@@ -575,7 +650,7 @@
      uint8_t *buf = av_malloc(buf_size);
      if (!buf)
          return AVERROR(ENOMEM);
 -    *ctx = avio_alloc_context(buf, buf_size, 1, NULL, NULL, NULL, NULL);
-+    *ctx = avio_alloc_context(buf, buf_size, 1,AVIO_FLAG_WRITE, NULL, NULL, NULL);
++    *ctx = avio_alloc_context(buf, buf_size, AVIO_FLAG_WRITE, NULL, NULL, NULL, NULL);
      if (!*ctx) {
          av_free(buf);
          return AVERROR(ENOMEM);
-@@ -978,22 +1056,49 @@
+@@ -998,22 +1073,57 @@
  {
      SegmentContext *seg = s->priv_data;
      AVFormatContext *oc = seg->avf;
@@ -165,15 +148,15 @@
      int ret;
  
      if (!oc)
-+        goto fail;
          return 0;
++        goto fail;
  
      if (!seg->write_header_trailer) {
          if ((ret = segment_end(s, 0, 1)) < 0)
--            return ret;
+             return ret;
 +            goto fail;
          if ((ret = open_null_ctx(&oc->pb)) < 0)
--            return ret;
+             return ret;
 +            goto fail;
          seg->is_nullctx = 1;
          ret = av_write_trailer(oc);
@@ -183,11 +166,13 @@
 +fail:
 +    if (seg->list)
 +        ff_format_io_close(s, &seg->list_pb);
++
 +    av_dict_free(&seg->format_options);
 +    av_opt_free(seg);
 +    av_freep(&seg->times);
 +    av_freep(&seg->frames);
 +    av_freep(&seg->cur_entry.filename);
++
 +    cur = seg -> segment_list_entries;
 +    while (cur) {
 +        next = cur->next;
@@ -195,6 +180,7 @@
 +        av_free(cur);
 +        cur = next;
 +    }
++
 +    cur = seg->segment_list_old;
 +    while (cur) {
 +        next = cur->next;
@@ -202,19 +188,22 @@
 +        av_free(cur);
 +        cur = next;
 +    }
++
++
 +    avformat_free_context(oc);
 +    seg->avf = NULL;
++
      return ret;
 +
  }
  
  static int seg_check_bitstream(AVFormatContext *s, AVStream *st,
-@@ -1027,7 +1132,7 @@
+@@ -1047,6 +1157,7 @@
      { "segment_list_flags","set flags affecting segment list generation", OFFSET(list_flags), AV_OPT_TYPE_FLAGS, {.i64 = SEGMENT_LIST_FLAG_CACHE }, 0, UINT_MAX, E, "list_flags"},
      { "cache",             "allow list caching",                                    0, AV_OPT_TYPE_CONST, {.i64 = SEGMENT_LIST_FLAG_CACHE }, INT_MIN, INT_MAX,   E, "list_flags"},
      { "live",              "enable live-friendly list generation (useful for HLS)", 0, AV_OPT_TYPE_CONST, {.i64 = SEGMENT_LIST_FLAG_LIVE }, INT_MIN, INT_MAX,    E, "list_flags"},
--
 +    { "delete",            "delete segment files that are no longer part of the playlist", 0, AV_OPT_TYPE_CONST, {.i64 = SEGMENT_LIST_FLAG_DELETE }, INT_MIN, INT_MAX,    E, "list_flags"},
+ 
      { "segment_list_size", "set the maximum number of playlist entries", OFFSET(list_size), AV_OPT_TYPE_INT,  {.i64 = 0},     0, INT_MAX, E },
  
-     { "segment_list_type", "set the segment list type",                  OFFSET(list_type), AV_OPT_TYPE_INT,  {.i64 = LIST_TYPE_UNDEFINED}, -1, LIST_TYPE_NB-1, E, "list_type" },
+
