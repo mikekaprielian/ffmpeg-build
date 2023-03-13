@@ -15,6 +15,27 @@ LAME_VERSION="3.100"
 OPUS_VERSION="1.3.1"
 LASS_VERSION="0.17.1"
 CUDA_VERSION="10.1.243-1"
+SSL_VERSION="1.1.1t"
+BUZZ_VERSION="2.6.7"
+FRIBIDI_VERSION="1.0.12"
+RTMP_VERSION="2.3"
+SOXR_VERSION="0.1.3"
+VIDSTAB_VERSION="v1.1.1"
+JPEG_VERSION="v2.5.0"
+ZIMG_VERSION="3.0.4"
+WEBP_VERSION="v1.3.0"
+VORBIS_VERSION="1.3.7"
+OGG_VERSION="1.3.5"
+SPEEX_VERSION="1.2.1"
+XML2_VERSION="2.9.12"
+XVID_VERSION="1.3.7"
+AMR_VERSION="0.1.6"
+ARMWB_VERSION="0.1.3"
+SDL2_VERSION="2.26.4"
+XCB_VERSION="1.13"
+XV_VERSION="1.0.12"
+FONTC_VERSION="2.14.2"
+
 CUDA_RPM_VER="-10-1"
 CUDA_REPO_KEY="http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/7fa2af80.pub"
 CUDA_DIR="/usr/local/cuda"
@@ -230,10 +251,10 @@ compileLibAss() {
 compileOpenSSL() {
     echo "Compiling openSSL"
     cd "$WORK_DIR/"
-    Wget "https://www.openssl.org/source/openssl-1.1.1t.tar.gz"
-    tar -xvf "openssl-1.1.1t.tar.gz"
-    cd "openssl-1.1.1t"
-    ./config --prefix="$DEST_DIR" --openssldir="$WORK_DIR"/openssl-1.1.1t --with-zlib-include="$WORK_DIR"/openssl-1.1.1h/include --with-zlib-lib="$WORK_DIR"/openssl-1.1.1h/lib no-shared zlib
+    Wget "https://www.openssl.org/source/openssl-$SSL_VERSION.tar.gz"
+    tar -xvf "openssl-$SSL_VERSION.tar.gz"
+    cd "openssl-$SSL_VERSION"
+    ./config --prefix="$DEST_DIR" --openssldir="$WORK_DIR"/openssl-$SSL_VERSION --with-zlib-include="$WORK_DIR"/openssl-$SSL_VERSION/include --with-zlib-lib="$WORK_DIR"/openssl-1.1.1h/lib no-shared zlib
     make -j 4
     make install
 }
@@ -241,8 +262,8 @@ compileOpenSSL() {
 compileHarfbuzz() {
     echo "Compiling harfbuzz"
     cd "$WORK_DIR/"
-    Wget "https://www.freedesktop.org/software/harfbuzz/release/harfbuzz-2.6.7.tar.xz"
-    tar -xvf "harfbuzz-2.6.7.tar.xz"
+    Wget "https://www.freedesktop.org/software/harfbuzz/release/harfbuzz-$BUZZ_VERSION.tar.xz"
+    tar -xvf "harfbuzz-$BUZZ_VERSION.tar.xz"
     cd harfbuzz-*
     ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
     make -j 4
@@ -253,8 +274,8 @@ compileHarfbuzz() {
 compileFribidi() {
     echo "Compiling fribidi"
     cd "$WORK_DIR/"
-    Wget "https://github.com/fribidi/fribidi/releases/download/v1.0.12/fribidi-1.0.12.tar.xz"
-    tar -xvf "fribidi-1.0.12.tar.xz"
+    Wget "https://github.com/fribidi/fribidi/releases/download/v$FRIBIDI_VERSION/fribidi-$FRIBIDI_VERSION.tar.xz"
+    tar -xvf "fribidi-$FRIBIDI_VERSION.tar.xz"
     cd fribidi-*
     ./configure --prefix="$DEST_DIR" --disable-shared --enable-static --disable-docs
     make -j 4
@@ -265,9 +286,9 @@ compileFribidi() {
 compileLibrtmp() {
     echo "Compiling librtmp"
     cd "$WORK_DIR/"
-    Wget "https://rtmpdump.mplayerhq.hu/download/rtmpdump-2.2e.tar.gz"
-    tar -xvf "rtmpdump-2.2e.tar.gz"
-    cd rtmpdump-2.2e
+    Wget "https://rtmpdump.mplayerhq.hu/download/rtmpdump-$RTMP_VERSION.tar.gz"
+    tar -xvf "rtmpdump-$RTMP_VERSION.tar.gz"
+    cd rtmpdump-$RTMP_VERSION
     sed -i "/INC=.*/d" ./Makefile # Remove INC if present from previous run.
     sed -i "s/prefix=.*/prefix=${TARGET_DIR_SED}\nINC=-I\$(prefix)\/include/" ./Makefile
     sed -i "s/SHARED=.*/SHARED=no/" ./Makefile
@@ -279,8 +300,8 @@ compileLibrtmp() {
 compileLibSoxr() {
     echo "Compiling libsoxr"
     cd "$WORK_DIR/"
-    Wget "https://cfhcable.dl.sourceforge.net/project/soxr/soxr-0.1.3-Source.tar.xz"
-    tar -xvf "soxr-0.1.3-Source.tar.xz"
+    Wget "https://cfhcable.dl.sourceforge.net/project/soxr/soxr-$SOXR_VERSION-Source.tar.xz"
+    tar -xvf "soxr-$SOXR_VERSION-Source.tar.xz"
     cd soxr-*
     PATH="$DEST_DIR/bin:$PATH" cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="$DEST_DIR" -DBUILD_SHARED_LIBS:bool=off -DWITH_OPENMP:bool=off -DBUILD_TESTS:bool=off
     make -j 4
@@ -291,8 +312,8 @@ compileLibSoxr() {
 compileLibvidstab() {
     echo "Compiling libvidstab"
     cd "$WORK_DIR/"
-    Wget "https://github.com/georgmartius/vid.stab/archive/v1.1.1.tar.gz"
-    tar -xvf "v1.1.1.tar.gz"
+    Wget "https://github.com/georgmartius/vid.stab/archive/$VIDSTAB_VERSION.tar.gz"
+    tar -xvf "$VIDSTAB_VERSION.tar.gz"
     cd vid.stab-*
     sed -i "s/vidstab SHARED/vidstab STATIC/" ./CMakeLists.txt
     PATH="$DEST_DIR/bin:$PATH" cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="$DEST_DIR" -DBUILD_SHARED_LIBS:bool=off -DWITH_OPENMP:bool=off
@@ -304,9 +325,9 @@ compileLibvidstab() {
 compileOpenJPEG() {
     echo "Compiling OpenJPEG"
     cd "$WORK_DIR/"
-    Wget "https://github.com/uclouvain/openjpeg/archive/refs/tags/v2.5.0.tar.gz"
-    tar -xvf "v2.5.0.tar.gz"
-    cd openjpeg-2.5.0
+    Wget "https://github.com/uclouvain/openjpeg/archive/refs/tags/$JPEG_VERSION.tar.gz"
+    tar -xvf "$JPEG_VERSION.tar.gz"
+    cd openjpeg-*
     mkdir -v build
     cd build
     cmake .. -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="$DEST_DIR" -DBUILD_SHARED_LIBS:bool=off
@@ -317,8 +338,8 @@ compileOpenJPEG() {
 compileZimg() {
     echo "Compiling Zimg"
     cd "$WORK_DIR/"
-    Wget "https://github.com/sekrit-twc/zimg/archive/refs/tags/release-3.0.4.tar.gz"
-    tar -xvf "release-3.0.4.tar.gz"
+    Wget "https://github.com/sekrit-twc/zimg/archive/refs/tags/release-$ZIMG_VERSION.tar.gz"
+    tar -xvf "release-$ZIMG_VERSION.tar.gz"
     cd zimg-release-*
     ./autogen.sh
     ./configure --enable-static  --prefix="$DEST_DIR" --disable-shared --enable-static
@@ -330,8 +351,8 @@ compileZimg() {
 compileLibwebp() {
     echo "Compiling libwebp"
     cd "$WORK_DIR/"
-    Wget "https://github.com/webmproject/libwebp/archive/refs/tags/v1.3.0.tar.gz"
-    tar -xvf "v1.3.0.tar.gz"
+    Wget "https://github.com/webmproject/libwebp/archive/refs/tags/$WEBP_VERSION.tar.gz"
+    tar -xvf "$WEBP_VERSION.tar.gz"
     cd libwebp*
     ./autogen.sh
     ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
@@ -343,8 +364,8 @@ compileLibwebp() {
 compileLibvorbis() {
     echo "Compiling libvorbis"
     cd "$WORK_DIR/"
-    Wget "https://github.com/xiph/vorbis/releases/download/v1.3.7/libvorbis-1.3.7.tar.gz"
-    tar -xvf "libvorbis-1.3.7.tar.gz"
+    Wget "https://github.com/xiph/vorbis/releases/download/v$VORBIS_VERSION/libvorbis-$VORBIS_VERSION.tar.gz"
+    tar -xvf "libvorbis-$VORBIS_VERSION.tar.gz"
     cd libvorbis-*
    ./autogen.sh
    ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
@@ -356,9 +377,9 @@ compileLibvorbis() {
 compileLibogg() {
     echo "Compiling libogg"
     cd "$WORK_DIR/"
-    Wget "https://github.com/xiph/ogg/releases/download/v1.3.5/libogg-1.3.5.tar.xz"
-    tar -xvf "libogg-1.3.5.tar.xz"
-    cd libogg-1.3.5
+    Wget "https://github.com/xiph/ogg/releases/download/v$OGG_VERSION/libogg-$OGG_VERSION.tar.xz"
+    tar -xvf "libogg-$OGG_VERSION.tar.xz"
+    cd libogg-$OGG_VERSION
     ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
     make -j 4
     make install
@@ -368,9 +389,9 @@ compileLibogg() {
 compileLibspeex() {
     echo "Compiling libspeex"
     cd "$WORK_DIR/"
-    Wget "https://github.com/xiph/speex/archive/refs/tags/Speex-1.2.1.tar.gz"
-    tar -xvf "Speex-1.2.1.tar.gz"
-    cd speex-Speex-1.2.1
+    Wget "https://github.com/xiph/speex/archive/refs/tags/Speex-$SPEEX_VERSION.tar.gz"
+    tar -xvf "Speex-$SPEEX_VERSION.tar.gz"
+    cd speex-Speex-$SPEEX_VERSION
     ./autogen.sh
     ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
     make -j 4
@@ -381,9 +402,9 @@ compileLibspeex() {
 compileLibxml() {
     echo "Compiling Libxml2"
     cd "$WORK_DIR/"
-    Wget "ftp://xmlsoft.org/libxml2/libxml2-2.9.12.tar.gz"
-    tar -xvf "libxml2-2.9.12.tar.gz"
-    cd libxml2-2.9.12
+    Wget "ftp://xmlsoft.org/libxml2/libxml2-$XML2_VERSION.tar.gz"
+    tar -xvf "libxml2-$XML2_VERSION.tar.gz"
+    cd libxml2-$XML2_VERSION
     ./configure --prefix="$DEST_DIR" --disable-shared --enable-static --with-history
     make -j 4
     make install
@@ -416,8 +437,8 @@ compileLibdav1d() {
 
 compileLibxvidcore() {
      echo "compiling Libxvidcore"
-     Wget "https://downloads.xvid.com/downloads/xvidcore-1.3.7.tar.gz"
-     tar -xvf "xvidcore-1.3.7.tar.gz"
+     Wget "https://downloads.xvid.com/downloads/xvidcore-$XVID_VERSION.tar.gz"
+     tar -xvf "xvidcore-$XVID_VERSION.tar.gz"
      cd xvidcore/build/generic
      ./configure --prefix="$DEST_DIR" --enable-static --disable-shared
      make
@@ -426,10 +447,10 @@ compileLibxvidcore() {
 }
 
 compileLibopencore() {
-     echo "compiling Libopencore armwb armnb"
-     Wget "https://versaweb.dl.sourceforge.net/project/opencore-amr/opencore-amr/opencore-amr-0.1.6.tar.gz"
-     tar -xvf "opencore-amr-0.1.6.tar.gz"
-     cd opencore-amr-0.1.6
+     echo "compiling Libopencore armnb"
+     Wget "https://versaweb.dl.sourceforge.net/project/opencore-amr/opencore-amr/opencore-amr-$AMR_VERSION.tar.gz"
+     tar -xvf "opencore-amr-$AMR_VERSION.tar.gz"
+     cd opencore-amr-$AMR_VERSION
      ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
      make
      make install
@@ -437,9 +458,9 @@ compileLibopencore() {
 
 compileLibvoamrwb() {
      echo "compiling Libvoamrwb"
-     Wget "https://cfhcable.dl.sourceforge.net/project/opencore-amr/vo-amrwbenc/vo-amrwbenc-0.1.3.tar.gz"
-     tar -xvf "vo-amrwbenc-0.1.3.tar.gz"
-     cd vo-amrwbenc-0.1.3
+     Wget "https://cfhcable.dl.sourceforge.net/project/opencore-amr/vo-amrwbenc/vo-amrwbenc-$AMRWB_VERSION.tar.gz"
+     tar -xvf "vo-amrwbenc-$AMRWB_VERSION.tar.gz"
+     cd vo-amrwbenc-$AMRWB_VERSION
      ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
      make
      make install
@@ -447,9 +468,9 @@ compileLibvoamrwb() {
 
 compileSDL2() {
      echo "compiling SDL2"
-     Wget "https://www.libsdl.org/release/SDL2-2.26.4.tar.gz"
-     tar -xvf "SDL2-2.26.4.tar.gz"
-     cd SDL2-2.26.4
+     Wget "https://www.libsdl.org/release/SDL2-$SDL2_VERSION.tar.gz"
+     tar -xvf "SDL2-$SDL2_VERSION.tar.gz"
+     cd SDL2-$SDL2_VERSION
      ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
      make
      make install
@@ -457,9 +478,9 @@ compileSDL2() {
 
 compilelibxcb() {
      echo "compiling LibXCB"
-     Wget "https://xcb.freedesktop.org/dist/libxcb-1.13.tar.bz2"
-     tar -xvf "libxcb-1.13.tar.bz2"
-     cd libxcb-1.13
+     Wget "https://xcb.freedesktop.org/dist/libxcb-$XCB_VERSION.tar.bz2"
+     tar -xvf "libxcb-$XCB_VERSION.tar.bz2"
+     cd libxcb-$XCB_VERSION
      sed -i "s/pthread-stubs//" configure
      ./configure $XORG_CONFIG --prefix="$DEST_DIR" --without-doxygen --disable-shared --enable-static
      make
@@ -469,9 +490,9 @@ compilelibxcb() {
 
 compilelibXv() {
      echo "compiling LibXv"
-     Wget "https://www.x.org/releases/individual/lib/libXv-1.0.12.tar.gz"
-     tar -xvf "libXv-1.0.12.tar.gz"
-     cd libXv-1.0.12
+     Wget "https://www.x.org/releases/individual/lib/libXv-$XV_VERSION.tar.gz"
+     tar -xvf "libXv-$XV_VERSION.tar.gz"
+     cd libXv-$XV_VERSION
      ./configure --prefix="$DEST_DIR" --disable-shared --enable-static --disable-docs
      make
      make install
@@ -479,9 +500,9 @@ compilelibXv() {
 
 compileFontconfig() {
     echo "compiling Fontconfig"
-    Wget "https://www.freedesktop.org/software/fontconfig/release/fontconfig-2.14.2.tar.xz"
-    tar -xvf "fontconfig-2.14.2.tar.xz"
-    cd fontconfig-2.14.2
+    Wget "https://www.freedesktop.org/software/fontconfig/release/fontconfig-$FONTC_VERSION.tar.xz"
+    tar -xvf "fontconfig-$FONTC_VERSION.tar.xz"
+    cd fontconfig-$FONTC_VERSION
     export PKG_CONFIG="pkg-config --static" 
     ./configure --prefix="$DEST_DIR" --disable-shared --enable-static --disable-docs 
     make
