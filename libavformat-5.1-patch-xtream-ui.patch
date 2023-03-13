@@ -136,7 +136,7 @@
      if (!buf)
          return AVERROR(ENOMEM);
 -    *ctx = avio_alloc_context(buf, buf_size, 1, NULL, NULL, NULL, NULL);
-+    *ctx = avio_alloc_context(buf, buf_size, AVIO_FLAG_WRITE, NULL, NULL, NULL, NULL);
++    *ctx = avio_alloc_context(buf, buf_size, 1, NULL, NULL, NULL, NULL);
      if (!*ctx) {
          av_free(buf);
          return AVERROR(ENOMEM);
