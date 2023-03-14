@@ -260,8 +260,8 @@ compileLibdav1d() {
 compileLibdrm() {
      echo "Compiling Libdrm"
      cd "$WORK_DIR/"
-     Wget "https://dri.freedesktop.org/libdrm/libdrm-$DRM_VERSION.tar.xz"
-     tar -xvf "libdrm-$DRM_VERSION.tar.xz"
+     Wget "https://dri.freedesktop.org/libdrm/libdrm-$DRM_VERSION.tar.gz"
+     tar -xvf "libdrm-$DRM_VERSION.tar.gz"
      cd libdrm-$DRM_VERSION
      ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
      make
