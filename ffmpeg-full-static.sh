@@ -626,7 +626,7 @@ compileffnvcodec() {
 
 compileFfmpeg(){
     echo "Compiling ffmpeg"
-    Clone https://github.com/FFmpeg/FFmpeg -b master
+    Clone https://github.com/FFmpeg/FFmpeg -b "release/5.1"
     patch --force -d "$WORK_DIR" -p1 < "$MYDIR/libavformat-5.1-patch-xtream-ui.patch"
 
     export PATH="$CUDA_DIR/bin:$PATH"  # ..path to nvcc
@@ -643,47 +643,51 @@ compileFfmpeg(){
       --enable-static \
       --disable-crystalhd \
       --enable-cuda \
-      --enable-cuda-nvcc \
       --enable-cuda-llvm \
+      --enable-cuda-nvcc \
       --enable-cuvid \
-      --enable-pic \
+      --enable-demuxer=dash \
+      --enable-ffnvcodec \
+      --disable-ffplay \
       --enable-fontconfig \
       --enable-frei0r \
-      --enable-ffnvcodec \
-      --enable-ffplay \
-      --enable-openssl \
       --enable-gpl \
-      --enable-version3 \
-      --enable-vaapi \
-      --enable-libnpp \
+      --enable-libaom \
       --enable-libass \
       --enable-libfdk-aac \
       --enable-libfreetype \
+      --enable-libfribidi \
+      --enable-libmfx \
       --enable-libmp3lame \
+      --enable-libnpp \
+      --enable-libopencore-amrnb \
+      --enable-libopencore-amrwb \
+      --enable-libopenjpeg \
       --enable-libopus \
       --enable-libtheora \
+      --enable-libspeex \
+      --enable-libsoxr \
+      --enable-libvo-amrwbenc \
       --enable-libvorbis \
       --enable-libvpx \
       --enable-libx264 \
       --enable-libx265 \
-      --enable-libfribidi \
-      --enable-libopenjpeg \
-      --enable-libsoxr \
-      --enable-libspeex \
       --enable-libvidstab \
       --enable-libwebp \
-      --enable-libzimg \
-      --enable-libmfx \
+      --enable-libxml2 \
       --enable-libxvid \
+      --enable-libzimg \
       --enable-libzvbi \
-      --enable-libopencore-amrnb \
-      --enable-libopencore-amrwb \
-      --enable-libvo-amrwbenc \
-      --enable-libXv \
+      --enable-openssl \
       --enable-nonfree \
-      --enable-libaom \
       --enable-nvenc \
-      --enable-nvdec
+      --enable-nvdec \
+      --enable-pic \
+      --disable-sndio \
+      --enable-vaapi \
+      --enable-vdpau \
+      --enable-version3 \
+      --extra-version=FFMpeg5.1-XUI-HW-CUDA-VAAPI-QSV
     Make install distclean
     hash -r
 }
