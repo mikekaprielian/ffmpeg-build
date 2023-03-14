@@ -534,7 +534,7 @@ compileLibxcb() {
      libtool --finish "$DEST_DIR"/lib
 }
 
-compileLibxml() {
+compileLibxml2() {
     echo "Compiling Libxml2"
     cd "$WORK_DIR/"
     Wget "ftp://xmlsoft.org/libxml2/libxml2-$XML2_VERSION.tar.gz"
@@ -730,7 +730,7 @@ compileLibvorbis
 compileLibVpx
 compileLibwebp
 compileLibxcb
-compileLibxml
+compileLibxml2
 compileLibX264
 compileLibX265
 compileLibXv
