@@ -308,7 +308,7 @@ compileLibmfx() {
      echo "Compiling Libmfx"
      cd "$WORK_DIR/"
      Clone https://github.com/lu-zero/mfx_dispatch.git
-     cd mfx_dispatch
+     cd "mfx_dispatch"
      autoreconf -fiv
      ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
      make install
