@@ -543,7 +543,7 @@ compileLibpng() {
      cd "$WORK_DIR/"
      Wget "https://downloads.sourceforge.net/libpng/libpng-$LIBPNG_VERSION.tar.xz"
      tar -xvf "libpng-$LIBPNG_VERSION.tar.xz"
-     cd libpng-$LIBPNG
+     cd libpng-$LIBPNG_VERSION
      ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
      make
      make install
