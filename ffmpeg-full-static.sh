@@ -197,6 +197,10 @@ compileLibAom() {
     Clone https://aomedia.googlesource.com/aom
     mkdir ../aom_build
     cd ../aom_build
+    wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | sudo apt-key add -
+    sudo apt-add-repository 'deb https://apt.kitware.com/ubuntu/ bionic main'
+    sudo apt-get update
+    sudo apt install -y cmake
     which cmake3 && PROG=cmake3 || PROG=cmake
     $PROG -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="$DEST_DIR" -DENABLE_SHARED=off -DENABLE_NASM=on ../aom
     Make install
