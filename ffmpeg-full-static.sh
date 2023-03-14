@@ -202,7 +202,7 @@ compileLibAom() {
     sudo apt-get update
     sudo apt install -y cmake
     which cmake3 && PROG=cmake3 || PROG=cmake
-    $PROG -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="$DEST_DIR" -DENABLE_SHARED=off -DENABLE_NASM=on ../aom
+    $PROG -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="$DEST_DIR" -DENABLE_SHARED=off -DBUILD_SHARED_LIBS=0 -DENABLE_NASM=on ../aom
     Make install
 }
 
