@@ -11,6 +11,7 @@
 # Globals
 NASM_VERSION="2.16"
 YASM_VERSION="1.3.0"
+AOM_VERSION="v3.5.0"
 LAME_VERSION="3.100"
 OPUS_VERSION="1.3.1"
 LASS_VERSION="0.17.1"
@@ -218,7 +219,7 @@ compileHarfbuzz() {
 compileLibAom() {
     echo "Compiling libaom"
     cd "$WORK_DIR/"
-    git clone --branch v3.4.0 https://aomedia.googlesource.com/aom
+    git clone --branch $AOM_VERSION https://aomedia.googlesource.com/aom
     mkdir aom_build
     cd aom_build
     wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | sudo apt-key add -
