@@ -83,7 +83,7 @@ installAptLibs() {
     sudo apt-get update
     sudo apt-get -y --force-yes install $PKGS \
       build-essential pkg-config texi2html software-properties-common doxygen \
-       libgpac-dev libva-dev python-xcbgen xcb-proto \
+       libgpac-dev ibpciaccess-dev libva-dev python-xcbgen xcb-proto \
        zlib1g-dev python-dev liblzma-dev libtool-bin
 }
 
@@ -263,7 +263,6 @@ compileLibdrm() {
      Wget "https://dri.freedesktop.org/libdrm/libdrm-$DRM_VERSION.tar.xz"
      tar -xvf "libdrm-$DRM_VERSION.tar.xz"
      cd libdrm-$DRM_VERSION
-     apt-get -y install libpciaccess-dev 
      ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
      make
      make install
