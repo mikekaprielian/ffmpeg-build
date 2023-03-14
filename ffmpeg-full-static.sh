@@ -81,7 +81,7 @@ PKGS="autoconf automake libtool patch make cmake bzip2 unzip wget git mercurial"
 installAptLibs() {
     sudo apt-get update
     sudo apt-get -y --force-yes install $PKGS \
-      build-essential pkg-config texi2html software-properties-common \
+      build-essential pkg-config texi2html software-properties-common doxygen \
        libgpac-dev libva-dev python-xcbgen xcb-proto \
        zlib1g-dev python-dev liblzma-dev libtool-bin
 }
@@ -194,16 +194,17 @@ compileLibX265() {
 
 compileLibAom() {
     echo "Compiling libaom"
-    Clone https://aomedia.googlesource.com/aom
-    mkdir ../aom_build
-    cd ../aom_build
+    cd "$WORK_DIR/"
+    git clone --branch v3.2.0 https://aomedia.googlesource.com/aom
+    mkdir aom_build
+    cd aom_build
     wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | sudo apt-key add -
     sudo apt-add-repository 'deb https://apt.kitware.com/ubuntu/ bionic main'
     sudo apt-get update
     sudo apt install -y cmake
     which cmake3 && PROG=cmake3 || PROG=cmake
-    $PROG -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="$DEST_DIR" -DENABLE_SHARED=off -DBUILD_SHARED_LIBS=0 -DENABLE_NASM=on ../aom
-    make -j 10
+    $PROG -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="$DEST_DIR" -DENABLE_SHARED=off -DENABLE_NASM=on ../aom
+    make -j4
     make install
 }
 
