@@ -244,7 +244,7 @@ compileLibAss() {
 }
 
 compileLibdav1d() {
-     echo "compiling Libdav1d"
+     echo "Compiling Libdav1d"
      cd "$WORK_DIR/"
      sudo apt-get -y install python3-pip
      pip3 install --user meson
@@ -462,6 +462,7 @@ compileLibX265() {
 
 compileLibVpx() {
     echo "Compiling libvpx"
+    cd "$WORK_DIR/"
     Clone https://chromium.googlesource.com/webm/libvpx
     ./configure --prefix="$DEST_DIR" --disable-examples --enable-runtime-cpu-detect --enable-vp9 --enable-vp8 \
     --enable-postproc --enable-vp9-postproc --enable-multi-res-encoding --enable-webm-io --enable-better-hw-compatibility \
