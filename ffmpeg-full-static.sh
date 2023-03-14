@@ -163,6 +163,22 @@ compileYasm() {
     Make install distclean
 }
 
+compileLibAom() {
+    echo "Compiling libaom"
+    cd "$WORK_DIR/"
+    git clone --branch v3.2.0 https://aomedia.googlesource.com/aom
+    mkdir aom_build
+    cd aom_build
+    wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | sudo apt-key add -
+    sudo apt-add-repository 'deb https://apt.kitware.com/ubuntu/ bionic main'
+    sudo apt-get update
+    sudo apt install -y cmake
+    which cmake3 && PROG=cmake3 || PROG=cmake
+    $PROG -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="$DEST_DIR" -DENABLE_SHARED=off -DENABLE_NASM=on ../aom
+    make
+    make install
+}
+
 compileLibX264() {
     echo "Compiling libx264"
     cd "$WORK_DIR/"
@@ -190,22 +206,6 @@ compileLibX265() {
 
     # forward declaration should not be used without struct keyword!
     sed -i.orig -e 's,^ *x265_param\* zoneParam,struct x265_param* zoneParam,' "$DEST_DIR/include/x265.h"
-}
-
-compileLibAom() {
-    echo "Compiling libaom"
-    cd "$WORK_DIR/"
-    git clone --branch v3.2.0 https://aomedia.googlesource.com/aom
-    mkdir aom_build
-    cd aom_build
-    wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | sudo apt-key add -
-    sudo apt-add-repository 'deb https://apt.kitware.com/ubuntu/ bionic main'
-    sudo apt-get update
-    sudo apt install -y cmake
-    which cmake3 && PROG=cmake3 || PROG=cmake
-    $PROG -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="$DEST_DIR" -DENABLE_SHARED=off -DENABLE_NASM=on ../aom
-    make -j4
-    make install
 }
 
 compileLibfdkcc() {
@@ -700,41 +700,41 @@ installNvidiaSDK
 
 compileNasm
 compileYasm
-compileLibX264
-compileLibX265
+compileffnvcodec
+compileFontconfig
+compileFreetype
+compileFrei0r
+compileFribidi
+compileHarfbuzz
 compileLibAom
-compileLibVpx
+compileLibAss
+compileLibdav1d
 compileLibfdkcc
 compileLibMP3Lame
-compileLibOpus
-compileLibAss
-compileOpenSSL
-compileHarfbuzz
-compileFribidi
-compileffnvcodec
-compileLibrtmp
-compileLibSoxr
-compileLibvidstab
-compileOpenJPEG
-compileZimg
-compileLibwebp
-compileLibvorbis
 compileLibogg
-compileLibspeex
-compileLibxml
-compileLibdav1d
-compileLibxvidcore
 compileLibopencore
-compileLibvoamrwb
-compileSDL2
-compilelibxcb
-compilelibXv
-compileFontconfig
-compileLibtheora
-compileFreetype
+compileLibOpus
 compileLibpng
+compileLibrtmp
+compileLibspeex
+compileLibSoxr
+compileLibtheora
+compileLibX264
+compileLibX265
+compileLibvidstab
+compileLibvoamrwb
 compileLibvdpau
-compileFrei0r
+compileLibvorbis
+compileLibVpx
+compileLibwebp
+compilelibxcb
+compileLibxml
+compilelibXv
+compileLibxvidcore
+compileOpenJPEG
+compileOpenSSL
+compileSDL2
+compileZimg
 compileFfmpeg
 
 echo "Complete!"
