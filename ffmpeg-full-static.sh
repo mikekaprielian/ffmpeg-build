@@ -555,6 +555,7 @@ compileLibtheora() {
     cd "$WORK_DIR/"
     Wget "https://downloads.xiph.org/releases/theora/libtheora-$THEORA_VERSION.tar.xz"
     tar -xvf "libtheora-$THEORA_VERSION.tar.xz"
+    sed -i 's/png_sizeof/sizeof/g' examples/png2theora.c
     cd libtheora-$THEORA_VERSION
     ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
     make
