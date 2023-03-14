@@ -294,15 +294,10 @@ compileFribidi() {
 compileLibrtmp() {
     echo "Compiling librtmp"
     cd "$WORK_DIR/"
-    Wget "https://rtmpdump.mplayerhq.hu/download/rtmpdump-$RTMP_VERSION.tar.gz"
-    tar -xvf "rtmpdump-$RTMP_VERSION.tar.gz"
-    cd rtmpdump-$RTMP_VERSION
-    sed -i "/INC=.*/d" ./Makefile # Remove INC if present from previous run.
-    sed -i "s/prefix=.*/prefix=${TARGET_DIR_SED}\nINC=-I\$(prefix)\/include/" ./Makefile
-    sed -i "s/SHARED=.*/SHARED=no/" ./Makefile
-    make 
-    make install
-
+    Clone "https://github.com/mikekaprielian/RTMPDump-OpenSSL-1.1.git"
+    cd RTMPDump-OpenSSL-1.1
+    make prefix=/root/ffmpeg-build-static-binaries SHARED= 
+    make install prefix=/root/ffmpeg-build-static-binaries SHARED=
 }
 
 compileLibSoxr() {
@@ -664,9 +659,10 @@ compileFfmpeg(){
       --enable-libopencore-amrwb \
       --enable-libopenjpeg \
       --enable-libopus \
-      --enable-libtheora \
+      --enable-librtmp
       --enable-libspeex \
       --enable-libsoxr \
+      --enable-libtheora \
       --enable-libvo-amrwbenc \
       --enable-libvorbis \
       --enable-libvpx \
@@ -710,7 +706,7 @@ compileOpenSSL
 compileHarfbuzz
 compileFribidi
 compileffnvcodec
-#compileLibrtmp not working yet (--enable-librtmp cannot be used yet)
+compileLibrtmp
 compileLibSoxr
 compileLibvidstab
 compileOpenJPEG
