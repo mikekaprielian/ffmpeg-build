@@ -150,13 +150,13 @@
 -        if (!st)
 +        if (!(st = avformat_new_stream(oc, NULL)))
              return AVERROR(ENOMEM);
-+        ret = ff_stream_encode_params_copy(st, ist);
++        ret = ff_stream_side_data_copy(st, ist);
 +        if (ret < 0)
 +            return ret;
          opar = st->codecpar;
          if (!oc->oformat->codec_tag ||
              av_codec_get_id (oc->oformat->codec_tag, ipar->codec_tag) == opar->codec_id ||
-@@ -392,8 +455,16 @@
+@@ -391,8 +454,16 @@
              if (seg->list_size && seg->segment_count >= seg->list_size) {
                  entry = seg->segment_list_entries;
                  seg->segment_list_entries = seg->segment_list_entries->next;
