@@ -244,9 +244,9 @@
 @@ -981,7 +1027,7 @@
  
      ret = ff_write_chained(seg->avf, pkt->stream_index, pkt, s,
-                            seg->initial_offset || seg->reset_timestamps ||
+-                           seg->initial_offset || seg->reset_timestamps ||
 -                           ffofmt(seg->avf->oformat)->interleave_packet);
-+                           seg->avf->oformat->interleave_packet);
++                           seg->initial_offset || seg->reset_timestamps || seg->avf->oformat->interleave_packet);
  
  fail:
      /* Use st->index here as the packet returned from ff_write_chained()
@@ -318,7 +318,7 @@
 +    if (oc->oformat->check_bitstream) {
          AVStream *const ost = oc->streams[st->index];
 +        int ret = oc->oformat->check_bitstream(oc, ost, pkt);
-         int ret = ffofmt(oc->oformat)->check_bitstream(oc, ost, pkt);
+-        int ret = ffofmt(oc->oformat)->check_bitstream(oc, ost, pkt);
          if (ret == 1) {
              FFStream *const  sti = ffstream(st);
 @@ -1047,6 +1127,7 @@
