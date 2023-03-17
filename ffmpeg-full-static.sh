@@ -644,12 +644,15 @@ compileFfmpeg(){
       --ld=g++ \
       --disable-shared \
       --enable-static \
+      --enable-libxml2 \
+      --enable-demuxer=dash \
+      --enable-nonfree \
+      --enable-version3 \
       --disable-crystalhd \
       --enable-cuda \
       --enable-cuda-llvm \
       --enable-cuda-nvcc \
       --enable-cuvid \
-      --enable-demuxer=dash \
       --enable-ffnvcodec \
       --disable-ffplay \
       --enable-fontconfig \
@@ -667,7 +670,7 @@ compileFfmpeg(){
       --enable-libopencore-amrwb \
       --enable-libopenjpeg \
       --enable-libopus \
-      --enable-librtmp
+      --enable-librtmp \
       --enable-libspeex \
       --enable-libsoxr \
       --enable-libtheora \
@@ -678,19 +681,16 @@ compileFfmpeg(){
       --enable-libwebp \
       --enable-libx264 \
       --enable-libx265 \
-      --enable-libxml2 \
       --enable-libxvid \
       --enable-libzimg \
       --enable-libzvbi \
       --enable-openssl \
-      --enable-nonfree \
       --enable-nvenc \
       --enable-nvdec \
       --enable-pic \
       --disable-sndio \
       --enable-vaapi \
       --enable-vdpau \
-      --enable-version3 \
       --extra-version=FFMpeg5.1-XUI-HW-CUDA-VAAPI-QSV
     Make install distclean
     hash -r
