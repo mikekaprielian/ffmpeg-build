@@ -262,7 +262,7 @@
 +    if (!oc) {
 +        goto fail;
 +      }
- 
+-
      if (!seg->write_header_trailer) {
          if ((ret = segment_end(s, 0, 1)) < 0)
 -            return ret;
