@@ -149,7 +149,6 @@
 -        st = ff_stream_clone(oc, ist);
 -        if (!st)
 +        if (!(st = avformat_new_stream(oc, NULL)))
-+
              return AVERROR(ENOMEM);
 +        ret = ff_stream_encode_params_copy(st, ist);
 +        if (ret < 0)
