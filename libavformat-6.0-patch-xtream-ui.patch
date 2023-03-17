@@ -340,6 +340,7 @@
 +const AVOutputFormat ff_segment_muxer = {
 +    .name           = "segment",
 +    .long_name      = NULL_IF_CONFIG_SMALL("segment"),
++    .priv_class     = &seg_class,
      .priv_data_size = sizeof(SegmentContext),
 +    .flags          = AVFMT_NOFILE|AVFMT_GLOBALHEADER,
      .init           = seg_init,
@@ -348,7 +349,6 @@
      .write_trailer  = seg_write_trailer,
      .deinit         = seg_free,
      .check_bitstream = seg_check_bitstream,
-+    .priv_class     = &seg_class,
  };
  #endif
  
@@ -362,6 +362,7 @@
 +const AVOutputFormat ff_stream_segment_muxer = {
 +    .name           = "stream_segment,ssegment",
 +    .long_name      = NULL_IF_CONFIG_SMALL("streaming segment muxer"),
++    .priv_class     = &seg_class,
 +    .priv_data_size = sizeof(SegmentContext),
 +    .flags          = AVFMT_NOFILE,
      .init           = seg_init,
@@ -370,6 +371,5 @@
      .write_trailer  = seg_write_trailer,
      .deinit         = seg_free,
      .check_bitstream = seg_check_bitstream,
-+    .priv_class     = &seg_class,
  };
  #endif
