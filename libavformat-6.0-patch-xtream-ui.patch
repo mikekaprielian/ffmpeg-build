@@ -156,7 +156,7 @@
          opar = st->codecpar;
          if (!oc->oformat->codec_tag ||
              av_codec_get_id (oc->oformat->codec_tag, ipar->codec_tag) == opar->codec_id ||
-@@ -392,8 +455,16 @@
+@@ -392,4 +455,16 @@
              if (seg->list_size && seg->segment_count >= seg->list_size) {
                  entry = seg->segment_list_entries;
                  seg->segment_list_entries = seg->segment_list_entries->next;
