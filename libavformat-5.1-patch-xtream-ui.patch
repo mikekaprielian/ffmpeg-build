@@ -269,8 +269,8 @@
  
  extern char *filter_nbthreads;
 
---- ffmpeg-build-static-sources/FFmpeg/fftools/ffmpeg_opt.c	2023-03-14 01:36:50.159254422 +0000
-+++ ffmpeg-build-static-sources/FFmpeg/fftools/ffmpeg_opt.c	2023-05-04 12:18:11.836111777 +0000
+--- ffmpeg-build-static-sources/FFmpeg/fftools/ffmpeg_opt.c	2023-05-04 12:54:51.033674863 +0000
++++ ffmpeg-build-static-sources/FFmpeg/fftools/ffmpeg_opt.c	2023-05-04 12:56:52.000963412 +0000
 @@ -152,6 +152,7 @@
  char *vstats_filename;
  char *sdp_filename;
@@ -287,7 +287,7 @@
  int do_hex_dump       = 0;
  int do_pkt_dump       = 0;
  int copy_ts           = 0;
-@@ -3609,18 +3611,7 @@
+@@ -3615,18 +3617,7 @@
  
  static int opt_progress(void *optctx, const char *opt, const char *arg)
  {
@@ -303,11 +303,11 @@
 -        return ret;
 -    }
 -    progress_avio = avio;
-+progress_filename = arg;
++ progress_filename = arg;
      return 0;
  }
  
-@@ -3747,6 +3738,8 @@
+@@ -3753,6 +3744,8 @@
          "audio drift threshold", "threshold" },
      { "copyts",         OPT_BOOL | OPT_EXPERT,                       { &copy_ts },
          "copy timestamps" },
@@ -359,7 +359,7 @@
 @@ -536,24 +536,6 @@
          pkt->dts = sti->pts_buffer[0];
      }
- 
+
 -    if (sti->cur_dts && sti->cur_dts != AV_NOPTS_VALUE &&
 -        ((!(s->oformat->flags & AVFMT_TS_NONSTRICT) &&
 -          st->codecpar->codec_type != AVMEDIA_TYPE_SUBTITLE &&
