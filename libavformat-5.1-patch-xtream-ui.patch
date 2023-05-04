@@ -202,8 +202,8 @@
 
 
 
---- ffmpeg-build-static-sources/FFmpeg/ffmpeg.c	2023-05-04 11:31:02.390518574 +0000
-+++ ffmpeg-build-static-sources/FFmpeg/ffmpeg.c	2023-05-04 12:09:14.946814417 +0000
+--- ffmpeg-build-static-sources/FFmpeg/fftools/ffmpeg.c	2023-05-04 11:31:02.390518574 +0000
++++ ffmpeg-build-static-sources/FFmpeg/fftools/ffmpeg.c	2023-05-04 12:09:14.946814417 +0000
 @@ -1694,15 +1694,25 @@
      }
      av_bprint_finalize(&buf, NULL);
@@ -236,8 +236,8 @@
          }
 
  
---- ffmpeg-build-static-sources/FFmpeg/ffmpeg_mux.c	2023-05-04 12:00:39.065724122 +0000
-+++ ffmpeg-build-static-sources/FFmpeg/ffmpeg_mux.c	2023-05-04 12:01:24.633444750 +0000
+--- ffmpeg-build-static-sources/FFmpeg/fftools/ffmpeg_mux.c	2023-05-04 12:00:39.065724122 +0000
++++ ffmpeg-build-static-sources/FFmpeg/fftools/ffmpeg_mux.c	2023-05-04 12:01:24.633444750 +0000
 @@ -111,7 +111,7 @@
  
      av_packet_rescale_ts(pkt, ost->mux_timebase, ost->st->time_base);
@@ -249,8 +249,8 @@
              pkt->dts > pkt->pts) {
              
              
---- ffmpeg-build-static-sources/FFmpeg/ffmpeg.h	2023-05-04 12:15:09.541009606 +0000
-+++ ffmpeg-build-static-sources/FFmpeg/ffmpeg.h	2023-05-04 12:15:30.724904464 +0000
+--- ffmpeg-build-static-sources/FFmpeg/fftools/ffmpeg.h	2023-05-04 12:15:09.541009606 +0000
++++ ffmpeg-build-static-sources/FFmpeg/fftools/ffmpeg.h	2023-05-04 12:15:30.724904464 +0000
 @@ -620,6 +620,8 @@
  extern float dts_delta_threshold;
  extern float dts_error_threshold;
@@ -269,8 +269,8 @@
  
  extern char *filter_nbthreads;
 
---- ffmpeg-build-static-sources/FFmpeg/ffmpeg_opt.c	2023-03-14 01:36:50.159254422 +0000
-+++ ffmpeg-build-static-sources/FFmpeg/ffmpeg_opt.c	2023-05-04 12:18:11.836111777 +0000
+--- ffmpeg-build-static-sources/FFmpeg/fftools/ffmpeg_opt.c	2023-03-14 01:36:50.159254422 +0000
++++ ffmpeg-build-static-sources/FFmpeg/fftools/ffmpeg_opt.c	2023-05-04 12:18:11.836111777 +0000
 @@ -152,6 +152,7 @@
  char *vstats_filename;
  char *sdp_filename;
