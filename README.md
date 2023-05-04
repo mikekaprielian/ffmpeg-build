@@ -34,4 +34,4 @@ Enjoy! :-)
 
  * export PATH="/usr/local/cuda/bin:/root/ffmpeg-build-static-binaries:$PATH"
  * export PKG_CONFIG_PATH="/root/ffmpeg-build-static-binaries/lib/pkgconfig"
-
+ * export LD_LIBRARY_PATH="/root/ffmpeg-build-static-binaries/lib:$LD_LIBRARY_PATH"
