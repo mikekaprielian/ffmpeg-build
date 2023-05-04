@@ -21,7 +21,7 @@ CUDA and VAAPI doesn't come with static build so you would need to install the N
 * patch available for ffmpeg 4.3.1/4.3.2
 * patch available for ffmpeg 4.4
 * patch available for ffmpeg 5.0
-* patch available for ffmpeg 5.1
+* patch available for ffmpeg 5.1 (FIX DTS PATCH included)
 
 ### Based on:
 
