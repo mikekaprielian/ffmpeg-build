@@ -226,7 +226,7 @@
 +        avio_write(avio, buf_script.str,
                     FFMIN(buf_script.len, buf_script.size - 1));
 -        avio_flush(progress_avio);
-+        avio_flush(_avio);
++        avio_flush(avio);
          av_bprint_finalize(&buf_script, NULL);
          if (is_last_report) {
 -            if ((ret = avio_closep(&progress_avio)) < 0)
