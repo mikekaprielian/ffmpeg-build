@@ -83,7 +83,7 @@ installAptLibs() {
     sudo apt-get update
     sudo apt-get -y --force-yes install $PKGS \
       build-essential pkg-config texi2html software-properties-common doxygen \
-       libgpac-dev ibpciaccess-dev libva-dev python-xcbgen xcb-proto \
+       libgpac-dev libpciaccess-dev libva-dev python-xcbgen xcb-proto \
        zlib1g-dev python-dev liblzma-dev libtool-bin
 }
 
