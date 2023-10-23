@@ -43,7 +43,6 @@ VDPAU_VERSION="1.2"
 DRM_VERSION="2.4.100"
 ZVBI_VERSION="0.2.35"
 FREI0R_VERSION="1.8.0"
-FFNVCODEC_VERSION="11.1.5.2"
 
 CUDA_RPM_VER="-10-1"
 CUDA_REPO_KEY="http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/7fa2af80.pub"
@@ -83,13 +82,13 @@ installAptLibs() {
     sudo apt-get update
     sudo apt-get -y --force-yes install $PKGS \
       build-essential pkg-config texi2html software-properties-common doxygen \
-       libgpac-dev libpciaccess-dev libva-dev python-xcbgen xcb-proto \
+       libgpac-dev libpciaccess-dev python-xcbgen xcb-proto \
        zlib1g-dev python-dev liblzma-dev libtool-bin
 }
 
 installYumLibs() {
     sudo yum -y install $PKGS freetype-devel gcc gcc-c++ pkgconfig zlib-devel \
-      libtheora-devel libvorbis-devel libva-devel cmake3
+      libtheora-devel libvorbis-devel cmake3
 }
 
 installLibs() {
@@ -99,49 +98,6 @@ installLibs() {
         ubuntu | linuxmint ) installAptLibs ;;
         * )                  installYumLibs ;;
     esac
-}
-
-installCUDASDKdeb() {
-    UBUNTU_VERSION="$1"
-    local CUDA_REPO_URL="https://developer.download.nvidia.com/compute/cuda/repos/ubuntu${UBUNTU_VERSION}/x86_64/cuda-repo-ubuntu1804_${CUDA_VERSION}_amd64.deb"
-    Wget "$CUDA_REPO_URL"
-    sudo dpkg -i "$(basename "$CUDA_REPO_URL")"
-    sudo apt-key adv --fetch-keys "$CUDA_REPO_KEY"
-    sudo apt-get -y update
-    sudo apt-get -y install cuda
-
-    sudo env LC_ALL=C.UTF-8 add-apt-repository -y ppa:graphics-drivers/ppa
-    sudo apt-get -y update
-    sudo apt-get -y upgrade
-}
-
-installCUDASDKyum() {
-    rpm -q cuda-repo-rhel7 2>/dev/null ||
-       sudo yum install -y "https://developer.download.nvidia.com/compute/cuda/repos/rhel7/x86_64/cuda-repo-rhel7-${CUDA_VERSION}.x86_64.rpm"
-    sudo yum install -y "cuda${CUDA_RPM_VER}"
-}
-
-installCUDASDK() {
-    echo "Installing CUDA and the latest driver repositories from repositories"
-    cd "$WORK_DIR/"
-
-    . /etc/os-release
-    case "$ID-$VERSION_ID" in
-        ubuntu-16.04 ) installCUDASDKdeb 1604 ;;
-        ubuntu-18.04 ) installCUDASDKdeb 1804 ;;
-        linuxmint-19.1)installCUDASDKdeb 1804 ;;
-        centos-7     ) installCUDASDKyum ;;
-        * ) echo "ERROR: only CentOS 7, Ubuntu 16.04 or 18.04 are supported now."; exit 1;;
-    esac
-}
-
-installNvidiaSDK() {
-    echo "Installing the nVidia NVENC SDK."
-    Clone https://git.videolan.org/git/ffmpeg/nv-codec-headers.git
-    make
-    make install PREFIX="$DEST_DIR"
-    patch --force -d "$DEST_DIR" -p1 < "$MYDIR/dynlink_cuda.h.patch" ||
-        echo "..SKIP PATCH, POSSIBLY NOT NEEDED. CONTINUED.."
 }
 
 compileNasm() {
@@ -175,18 +131,6 @@ compileFontconfig() {
      make
      make install
      unset PKG_CONFIG
-}
-
-compileffnvcodec() {
-     echo "Compiling ffnvcodec"
-     cd "$WORK_DIR/"
-     Wget "https://github.com/FFmpeg/nv-codec-headers/releases/download/n$FFNVCODEC_VERSION/nv-codec-headers-$FFNVCODEC_VERSION.tar.gz"
-     tar -xvf nv-codec-headers-$FFNVCODEC_VERSION.tar.gz
-     cd nv-codec-headers-$FFNVCODEC_VERSION
-     sed -i 's/\/usr\/local/\/root\/ffmpeg-build-static-binaries/g' Makefile
-     make
-     make install
-    
 }
 
 compileFrei0r() {
@@ -314,7 +258,7 @@ compileLibmfx() {
      make install
      libtool --finish "$DEST_DIR"/lib
      ldconfig
-     apt-get install -y ocl-icd-opencl-dev opencl-headers libva-dev vainfo
+     apt-get install -y ocl-icd-opencl-dev opencl-headers vainfo
 }
 
 compileLibMP3Lame() {
@@ -632,14 +576,14 @@ compileFfmpeg(){
     Clone https://github.com/FFmpeg/FFmpeg -b "release/5.1"
     patch --force -d "$WORK_DIR" -p1 < "$MYDIR/libavformat-5.1-patch-xtream-ui.patch"
 
-    export PATH="$CUDA_DIR/bin:$PATH"  # ..path to nvcc
+    export PATH="$PATH"  # ..path to nvcc
     PATH="$DEST_DIR/bin:$PATH" PKG_CONFIG_PATH="$DEST_DIR/lib/pkgconfig:$DEST_DIR/lib64/pkgconfig" \
     ./configure \
       --pkg-config-flags="--static" \
       --prefix="$DEST_DIR" \
       --bindir="$DEST_DIR/bin" \
-      --extra-cflags="-I $DEST_DIR/include -I $CUDA_DIR/include/" \
-      --extra-ldflags="-L $DEST_DIR/lib -L $CUDA_DIR/lib64/" \
+      --extra-cflags="-I $DEST_DIR/include/" \
+      --extra-ldflags="-L $DEST_DIR/lib/" \
       --extra-libs="-lpthread -lm -lz" \
       --ld=g++ \
       --disable-shared \
@@ -649,11 +593,6 @@ compileFfmpeg(){
       --enable-nonfree \
       --enable-version3 \
       --disable-crystalhd \
-      --enable-cuda \
-      --enable-cuda-llvm \
-      --enable-cuda-nvcc \
-      --enable-cuvid \
-      --enable-ffnvcodec \
       --disable-ffplay \
       --enable-fontconfig \
       --enable-frei0r \
@@ -685,13 +624,10 @@ compileFfmpeg(){
       --enable-libzimg \
       --enable-libzvbi \
       --enable-openssl \
-      --enable-nvenc \
-      --enable-nvdec \
       --enable-pic \
       --disable-sndio \
-      --enable-vaapi \
       --enable-vdpau \
-      --extra-version=FFMpeg5.1-XUI-HW-CUDA-VAAPI-QSV
+      --extra-version=FFMpeg5.1-XUI-NO-HW
     Make install distclean
     hash -r
 }
