@@ -638,7 +638,6 @@ installNvidiaSDK
 
 compileNasm
 compileYasm
-compileffnvcodec
 compileFontconfig
 compileFrei0r
 compileHarfbuzz
