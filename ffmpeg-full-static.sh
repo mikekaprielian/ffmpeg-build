@@ -225,6 +225,8 @@ compileGNUTLS() {
     tar -xvf "$GNUTLS_VERSION.tar.gz"
     cd gnutls-$GNUTLS_VERSION
     ./configure --prefix="$DEST_DIR" --bindir="$DEST_DIR"/bin --enable-static --disable-shared --with-pic --with-included-libtasn1 --with-included-unistring --without-p11-kit --disable-doc --disable-c xx --disable-tools
+    make -j 4
+    make install
 }
 
 compileHarfbuzz() {
