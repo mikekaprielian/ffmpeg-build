@@ -44,6 +44,8 @@ DRM_VERSION="2.4.100"
 ZVBI_VERSION="0.2.35"
 FREI0R_VERSION="1.8.0"
 FFNVCODEC_VERSION="11.1.5.2"
+GMP_VERSION="6.3.0"
+GNUTLS_VERSION="3.8.5"
 
 CUDA_RPM_VER="-10-1"
 CUDA_REPO_KEY="http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/7fa2af80.pub"
@@ -204,6 +206,27 @@ compileFrei0r() {
      make install
 }
 
+compileGMP() {
+     echo "Compiling GMP"
+     cd "$WORK_DIR/"
+     Wget "https://gmplib.org/download/gmp/gmp-$GMP_VERSION.tar.xz"
+      tar -xvf "gmp-$GMP_VERSION.tar.xz"
+      cd gmp-*
+      ./configure --prefix="$DEST_DIR" --bindir="$DEST_DIR"/bin --disable-shared  --with-pic
+      make -j 4
+      make install
+
+}
+
+compileGNUTLS() {
+    echo "Compiling GNUTLS"
+    cd "$WORK_DIR/"
+    Wget "https://github.com/gnutls/gnutls/archive/refs/tags/$GNUTLS_VERSION.tar.gz"
+    tar -xvf "$GNUTLS_VERSION.tar.gz"
+    cd gnutls-$GNUTLS_VERSION
+    ./configure --prefix="$DEST_DIR" --bindir="$DEST_DIR"/bin --enable-static --disable-shared --with-pic --with-included-libtasn1 --with-included-unistring --without-p11-kit --disable-doc --disable-c xx --disable-tools
+}
+
 compileHarfbuzz() {
     echo "Compiling harfbuzz"
     cd "$WORK_DIR/"
@@ -326,6 +349,18 @@ compileLibMP3Lame() {
     ./configure --prefix="$DEST_DIR" --enable-nasm --disable-shared
     Make install distclean
 }
+
+compileLibNettle() {
+    echo "Compiling LibNettle"
+    cd "$WORK_DIR/"
+    Wget "https://github.com/gnutls/nettle/archive/refs/tags/nettle_3.8.1_release_20220727.tar.gz"
+    tar xzvf "nettle_3.8.1_release_2022072.tar.gz"
+    cd "nettle_3.8.1_release_20220727"
+    ./configure --prefix="$DEST_DIR" --bindir="$DEST_DIR"/bin --disable-shared  --with-pic
+    make -j 4
+    make install
+}
+    
 
 compileLibogg() {
     echo "Compiling libogg"
@@ -657,6 +692,7 @@ compileFfmpeg(){
       --disable-ffplay \
       --enable-fontconfig \
       --enable-frei0r \
+      --enable-gnutls \
       --enable-gpl \
       --enable-libaom \
       --enable-libass \
@@ -705,6 +741,7 @@ compileYasm
 compileffnvcodec
 compileFontconfig
 compileFrei0r
+compileGMP
 compileHarfbuzz
 compileLibAom
 compileLibAss
@@ -713,6 +750,7 @@ compileLibdrm
 compileLibfdkcc
 compileLibFreetype
 compileLibFribidi
+compileLibNettle
 compileLibmfx
 compileLibMP3Lame
 compileLibogg
