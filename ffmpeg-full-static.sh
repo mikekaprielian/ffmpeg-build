@@ -222,8 +222,8 @@ compileGMP() {
 compileGNUTLS() {
     echo "Compiling GNUTLS"
     cd "$WORK_DIR/"
-    Wget "https://github.com/gnutls/gnutls/archive/refs/tags/$GNUTLS_VERSION.tar.gz"
-    tar -xvf "$GNUTLS_VERSION.tar.gz"
+    Wget "https://www.gnupg.org/ftp/gcrypt/gnutls/v3.8/gnutls-$GNUTLS_VERSION.tar.gz"
+    tar -xvf "gnutls-$GNUTLS_VERSION.tar.gz"
     cd gnutls-$GNUTLS_VERSION
     ./configure --prefix="$DEST_DIR" --bindir="$DEST_DIR"/bin --enable-static --disable-shared --with-pic --with-included-libtasn1 --with-included-unistring --without-p11-kit --disable-doc --disable-c --disable-tools
     make -j 4
