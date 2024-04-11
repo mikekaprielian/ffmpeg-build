@@ -735,7 +735,7 @@ compileFfmpeg(){
       --enable-libxvid \
       --enable-libzimg \
       --enable-libzvbi \
-      --enable-openssl \
+#      --enable-openssl \
       --enable-nvenc \
       --enable-nvdec \
       --enable-pic \
