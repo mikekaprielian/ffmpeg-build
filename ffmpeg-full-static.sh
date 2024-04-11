@@ -46,6 +46,7 @@ FREI0R_VERSION="1.8.0"
 FFNVCODEC_VERSION="11.1.5.2"
 GMP_VERSION="6.3.0"
 GNUTLS_VERSION="3.8.5"
+NETTLE_VERION="3.9"
 
 CUDA_RPM_VER="-10-1"
 CUDA_REPO_KEY="http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/7fa2af80.pub"
@@ -224,7 +225,7 @@ compileGNUTLS() {
     Wget "https://github.com/gnutls/gnutls/archive/refs/tags/$GNUTLS_VERSION.tar.gz"
     tar -xvf "$GNUTLS_VERSION.tar.gz"
     cd gnutls-$GNUTLS_VERSION
-    ./configure --prefix="$DEST_DIR" --bindir="$DEST_DIR"/bin --enable-static --disable-shared --with-pic --with-included-libtasn1 --with-included-unistring --without-p11-kit --disable-doc --disable-c xx --disable-tools
+    ./configure --prefix="$DEST_DIR" --bindir="$DEST_DIR"/bin --enable-static --disable-shared --with-pic --with-included-libtasn1 --with-included-unistring --without-p11-kit --disable-doc --disable-c --disable-tools
     make -j 4
     make install
 }
@@ -355,9 +356,9 @@ compileLibMP3Lame() {
 compileLibNettle() {
     echo "Compiling LibNettle"
     cd "$WORK_DIR/"
-    Wget "https://github.com/gnutls/nettle/archive/refs/tags/nettle_3.8.1_release_20220727.tar.gz"
-    tar xzvf "nettle_3.8.1_release_2022072.tar.gz"
-    cd "nettle_3.8.1_release_20220727"
+    Wget "https://ftp.gnu.org/gnu/nettle/nettle-3.9.tar.gz"
+    tar xzvf "nettle-3.9.tar.gz"
+    cd "nettle-3.9"
     ./configure --prefix="$DEST_DIR" --bindir="$DEST_DIR"/bin --disable-shared  --with-pic
     make -j 4
     make install
