@@ -751,6 +751,7 @@ compileLibfdkcc
 compileLibFreetype
 compileLibFribidi
 compileLibNettle
+compileGNUTLS
 compileLibmfx
 compileLibMP3Lame
 compileLibogg
