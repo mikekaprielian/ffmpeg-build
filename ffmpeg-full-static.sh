@@ -46,7 +46,8 @@ FREI0R_VERSION="1.8.0"
 FFNVCODEC_VERSION="11.1.5.2"
 GMP_VERSION="6.3.0"
 GNUTLS_VERSION="3.8.5"
-NETTLE_VERION="3.9"
+NETTLE_VERSION="3.9"
+UNI_VERSION="1.2"
 
 CUDA_RPM_VER="-10-1"
 CUDA_REPO_KEY="http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/7fa2af80.pub"
@@ -356,9 +357,9 @@ compileLibMP3Lame() {
 compileLibNettle() {
     echo "Compiling LibNettle"
     cd "$WORK_DIR/"
-    Wget "https://ftp.gnu.org/gnu/nettle/nettle-3.9.tar.gz"
-    tar xzvf "nettle-3.9.tar.gz"
-    cd "nettle-3.9"
+    Wget "https://ftp.gnu.org/gnu/nettle/nettle-$NETTLE_VERSION.tar.gz"
+    tar xzvf "nettle-$NETTLE_VERSION.tar.gz"
+    cd "nettle-$NETTLE_VERSION"
     ./configure --prefix="$DEST_DIR" --bindir="$DEST_DIR"/bin --disable-shared  --with-pic
     make -j 4
     make install
@@ -466,6 +467,17 @@ compileLibtheora() {
     cd libtheora-$THEORA_VERSION
     ./configure --prefix="$DEST_DIR" --disable-shared --enable-static
     make
+    make install
+}
+
+compileLibUnistring() {
+    echo "Compiling LibUnistring"
+    cd "$WORK_DIR/"
+    Wget "https://ftp.gnu.org/gnu/libunistring/libunistring-$UNI_VERSION.tar.gz"
+    tar xzvf "libunistring-$UNI_VERSION.tar.gz"
+    cd "libunistring-$UNI_VERSION"
+    ./configure --prefix="$DEST_DIR" --bindir="$DEST_DIR"/bin --disable-shared  --with-pic
+    make -j 4
     make install
 }
 
@@ -765,6 +777,7 @@ compileLibrtmp
 compileLibspeex
 compileLibSoxr
 compileLibtheora
+compileLibUnistring
 compileLibvidstab
 compileLibvoamrwb
 compileLibvdpau
